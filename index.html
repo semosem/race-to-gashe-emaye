@@ -116,12 +116,26 @@ body.rot #rotate{display:flex}
 #teamScreen .mate canvas{width:120px;height:140px;position:relative;z-index:1;filter:drop-shadow(0 4px 4px rgba(0,0,0,.35));transition:transform .15s}
 #teamScreen .mate::before{content:"";position:absolute;left:50%;top:132px;width:96px;height:16px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(rgba(0,0,0,.45),transparent 70%)}
 #teamScreen .mate.on::before{background:radial-gradient(rgba(255,215,122,.95),rgba(242,182,50,.35) 55%,transparent 72%);width:120px;height:22px;top:128px}
-#teamScreen .mate.on canvas{transform:translateY(-4px) scale(1.06)}
+#teamScreen .mate canvas{transform-origin:50% 100%;transition:transform .22s cubic-bezier(.34,1.56,.64,1),filter .22s}
+#teamScreen .mate.on canvas{transform:scale(1.08)}
+#teamScreen .mate:hover canvas,#teamScreen .mate:focus-within canvas{transform:scale(1.18);filter:drop-shadow(0 6px 8px rgba(0,0,0,.45)) drop-shadow(0 0 10px rgba(255,215,122,.45))}
+#teamScreen .mate::before{transition:width .22s,opacity .22s}
+#teamScreen .mate:hover::before{width:112px}
+#teamScreen .mate b{transition:color .15s}
+#teamScreen .mate:hover b{color:var(--gold2)}
+@media (prefers-reduced-motion:reduce){#teamScreen .mate canvas{transition:none}}
 #teamScreen .mate b{font-size:1.25rem;color:var(--cream);text-shadow:2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 3px 8px rgba(0,0,0,.6)}
 #teamScreen .mate .pw b{font-family:var(--display);font-weight:400;font-size:.9rem;color:var(--gold2)}
 #teamScreen .mate .d{display:none}
-#teamScreen .mate .row{gap:6px;margin-top:4px;flex-wrap:nowrap}
-#teamScreen .mate button.small.ghost{background:rgba(30,15,8,.72)}
+#teamScreen .fig{position:relative;width:120px;height:140px;cursor:pointer}
+#teamScreen .fig canvas{display:block}
+#teamScreen .mate .play{width:104px;margin-top:6px}
+.face{position:absolute;z-index:2;width:30px;height:30px;min-height:30px;padding:0;border-radius:50%;display:grid;place-items:center;transform:translate(-50%,-50%);
+  background:rgba(30,15,8,.82) center/cover no-repeat;color:var(--gold2);box-shadow:inset 0 0 0 2px var(--gold),0 2px 6px rgba(0,0,0,.4)}
+.face:active{transform:translate(-50%,-50%) scale(.94);box-shadow:inset 0 0 0 2px var(--gold)}
+.face.has{box-shadow:inset 0 0 0 2px var(--gold2),0 0 0 2px rgba(30,15,8,.8)}
+.face .tag{position:absolute;left:calc(100% + 3px);top:50%;transform:translateY(-50%);font:400 .7rem var(--display);color:var(--cream);white-space:nowrap;
+  text-shadow:1px 1px 0 #2a1405,-1px 1px 0 #2a1405,1px -1px 0 #2a1405,-1px -1px 0 #2a1405}
 /* phones held sideways: short screens */
 @media (max-height:500px) and (orientation:landscape){
   .overlay{padding:8px max(12px,env(safe-area-inset-left,0px))}
@@ -137,13 +151,16 @@ body.rot #rotate{display:flex}
   button{font-size:1.05rem;padding:9px 16px}
   #teamScreen .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:2px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   #teamScreen .team::-webkit-scrollbar{display:none}
+  #teamScreen .team{padding-top:24px;margin-top:-18px}
   .stage{gap:6px}
   .stage-top{grid-template-columns:40px 1fr auto;grid-template-areas:"back title lv";column-gap:10px}
   .stage-top h1{font-size:1.45rem;text-align:left}
   .back{width:40px;height:40px;min-height:40px}
   .lvl{font-size:.78rem;padding:6px 9px}
   #teamScreen .mate{flex:0 0 132px;scroll-snap-align:start}
-  #teamScreen .mate canvas{width:96px;height:112px}
+  #teamScreen .fig,#teamScreen .mate canvas{width:96px;height:112px}
+  #teamScreen .mate .play{width:92px;margin-top:4px}
+  .face{width:28px;height:28px;min-height:28px}
   #teamScreen .mate::before{top:104px;width:80px}
   #teamScreen .mate.on::before{top:100px;width:100px}
   #teamScreen .mate b{font-size:1.05rem}
@@ -208,7 +225,8 @@ body.rot #rotate{display:flex}
       <label class="hint" for="zoom">Drag to move the face into the circle, then zoom</label>
       <input id="zoom" type="range" min="1" max="4" step="0.01" value="1">
       <p class="hint">The photo stays on this device.</p>
-      <div class="row"><button id="cropSave" type="button">Save face</button><button id="cropCancel" type="button" class="ghost">Cancel</button></div>
+      <div class="row" id="cropRow"><button id="cropSave" type="button">Save face</button><button id="cropCancel" type="button" class="ghost">Cancel</button></div>
+      <div class="row" id="manageRow" hidden><button id="cropNew" type="button">New photo</button><button id="cropRemove" type="button" class="ghost">Remove face</button><button id="manageCancel" type="button" class="ghost">Done</button></div>
     </div>
   </div>
   <input type="file" id="faceFile" accept="image/*" hidden>
@@ -496,23 +514,42 @@ function drawLineup(){const c=$('lineup');if(!c||!SHEET.kalkidan_run)return;cons
 
 // ---------- team & faces ----------
 let cropFor=null,cropImg=null,cz=1,cx0=0,cy0=0;
-function mateCanvas(key){const c=document.createElement('canvas');const d=2;c.width=120*d;c.height=140*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);
-  const src=key==='meba'?'nahome':key;const sh=SHEET[src+'_run'];if(!sh)return c;const m=sh.m;let s=132/figH(src);if(key==='meba'){s=300/figH(src);}
+function paintMate(c,key,f){const x=c.getContext('2d');x.setTransform(2,0,0,2,0,0);x.clearRect(0,0,120,140);
+  const src=key==='meba'?'nahome':key;const sh=SHEET[src+'_run'];if(!sh)return;const m=sh.m;const nf=src==='kalkidan'?6:m.n;f=((f%nf)+nf)%nf;
+  let s=132/figH(src);if(key==='meba'){s=300/figH(src);}
   const w=m.fw*s,h=m.fh*s;let dx=60-w/2,dy=136-m.foot*s;if(key==='meba'){dy=6-m.face[0][1][1]*s+40;dx=60-m.face[0][1][0]*s;}
-  x.drawImage(sh.c,0,0,m.fw,m.fh,dx,dy,w,h);
-  const ids=src==='nahome'?['nahome','meba']:[key];(m.face&&m.face[0]||[]).forEach(([fx,fy,fr],j)=>{const im=FACES[ids[j]];if(!im)return;const px=dx+fx*s,py=dy+fy*s,r=fr*s*1.28;x.save();x.beginPath();x.arc(px,py,r,0,7);x.clip();x.drawImage(im,px-r,py-r,r*2,r*2);x.restore();});
-  return c;}
-const ROLE={meba:'<b>Rides with Nahome</b>'};for(const k of ORDER)ROLE[k]='<b>'+CHARS[k].powerName+'</b><span class="d"> · '+CHARS[k].desc+'</span>';
+  x.drawImage(sh.c,f*m.fw,0,m.fw,m.fh,dx,dy,w,h);
+  const ids=src==='nahome'?['nahome','meba']:[key];const fl=m.face&&m.face[f]||[];if(!c._faces){c._faces=[];fl.forEach(([fx,fy,fr],j)=>c._faces.push({id:ids[j],x:dx+fx*s,y:dy+fy*s,r:fr*s*1.28}));}
+  fl.forEach(([fx,fy,fr],j)=>{const im=FACES[ids[j]];if(!im)return;const px=dx+fx*s,py=dy+fy*s,r=fr*s*1.28;x.save();x.beginPath();x.arc(px,py,r,0,7);x.clip();x.drawImage(im,px-r,py-r,r*2,r*2);x.restore();});}
+function mateCanvas(key){const c=document.createElement('canvas');c.width=240;c.height=280;c._key=key;c._f=0;paintMate(c,key,0);return c;}
+// animate hovered and selected runners on the runner screen
+setInterval(()=>{if($('teamScreen').hidden)return;document.querySelectorAll('#team .mate').forEach(m=>{const c=m.querySelector('canvas');if(!c)return;
+  const live=m.matches(':hover')||m.classList.contains('on')||m.contains(document.activeElement);if(live){c._f++;paintMate(c,c._key,c._f);}else if(c._f){c._f=0;paintMate(c,c._key,0);}});},90);
+const ROLE={};for(const k of ORDER)ROLE[k]='<b>'+CHARS[k].powerName+'</b><span class="d"> · '+CHARS[k].desc+'</span>';
 function buildLevels(){$('levels').replaceChildren(...LEVELS.map((L,i)=>{const b=document.createElement('button');b.type='button';b.className='small ghost lvl';b.setAttribute('aria-pressed',i===lv);
   b.innerHTML='<span class="geez">'+L.forms[0][0]+' '+L.forms[1][0]+' '+L.forms[2][0]+' …</span>'+(store.get('done_'+i)?' ✓':'');b.setAttribute('aria-label','Level '+(i+1)+': '+L.name);b.addEventListener('click',()=>{lv=i;store.set('level',i);buildLevels();});return b;}));}
-function buildTeam(){buildLevels();$('team').replaceChildren(...['afomia','emmu','eldana','bethani','kalkidan','kiru','nahome','meba'].map(key=>{const K=KIDS[key];const d=document.createElement('div');d.className='mate'+(key===pick?' on':'');
-  d.append(mateCanvas(key));d.insertAdjacentHTML('beforeend',`<b>${K.name}</b><span class="pw">${ROLE[key]}</span>`);
-  const row=document.createElement('div');row.className='row';if(CHARS[key]){const pb=document.createElement('button');pb.type='button';pb.className='small';pb.textContent='Play';pb.setAttribute('aria-label','Play as '+K.name);pb.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});row.append(pb);}const a=document.createElement('button');a.type='button';a.className='small ghost';a.textContent=FACES[key]?'Change face':'Add face';
-  a.addEventListener('click',()=>{cropFor=key;$('faceFile').value='';$('faceFile').click();});row.append(a);
-  if(FACES[key]){const r=document.createElement('button');r.type='button';r.className='small ghost';r.textContent='Remove';r.addEventListener('click',()=>{store.del('face_'+key);delete FACES[key];buildTeam();drawLineup();});row.append(r);}
-  d.append(row);return d;}));}
+const CAM='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 4.5 7.6 6.5H5a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5a2 2 0 0 0-2-2h-2.6L15 4.5H9Zm3 4a4.25 4.25 0 1 1 0 8.5 4.25 4.25 0 0 1 0-8.5Zm0 2a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"/></svg>';
+function faceAction(id){cropFor=id;if(FACES[id])openManage(id);else{$('faceFile').value='';$('faceFile').click();}}
+function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{const K=KIDS[key];const d=document.createElement('div');d.className='mate'+(key===pick?' on':'');
+  const fig=document.createElement('div');fig.className='fig';const cv2=mateCanvas(key);fig.append(cv2);
+  for(const f of (cv2._faces||[])){const bt=document.createElement('button');bt.type='button';bt.className='face'+(FACES[f.id]?' has':'');
+    bt.style.left=((f.x+f.r*.9)/120*100)+'%';bt.style.top=((f.y-f.r*1.6)/140*100)+'%';
+    bt.setAttribute('aria-label',(FACES[f.id]?'Change ':'Add ')+KIDS[f.id].name+'’s face');bt.title=bt.getAttribute('aria-label');
+    if(FACES[f.id])bt.style.backgroundImage='url('+FACES[f.id].src+')';else bt.innerHTML=CAM;
+    if(key==='nahome')bt.insertAdjacentHTML('beforeend','<span class="tag">'+KIDS[f.id].name+'</span>');
+    bt.addEventListener('click',e=>{e.stopPropagation();faceAction(f.id);});fig.append(bt);}
+  fig.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});
+  d.append(fig);d.insertAdjacentHTML('beforeend',`<b>${K.name}</b><span class="pw">${ROLE[key]}</span>`);
+  const pb=document.createElement('button');pb.type='button';pb.className='small play';pb.textContent='Play';pb.setAttribute('aria-label','Play as '+CHARS[key].label);
+  pb.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});d.append(pb);return d;}));}
+function setCropMode(manage){$('cropRow').hidden=manage;$('manageRow').hidden=!manage;$('zoom').hidden=manage;document.querySelector('label[for=zoom]').hidden=manage;}
+function openManage(id){const c=$('cropCv').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,480,480);c.drawImage(FACES[id],70,70,340,340);
+  $('cropTitle').textContent=KIDS[id].name+'’s face';setCropMode(true);$('teamScreen').hidden=true;$('cropScreen').hidden=false;}
+$('cropNew').addEventListener('click',()=>{$('faceFile').value='';$('faceFile').click();});
+$('cropRemove').addEventListener('click',()=>{store.del('face_'+cropFor);delete FACES[cropFor];buildTeam();drawLineup();$('cropScreen').hidden=true;$('teamScreen').hidden=false;});
+$('manageCancel').addEventListener('click',()=>{$('cropScreen').hidden=true;$('teamScreen').hidden=false;});
 $('faceFile').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{cropImg=im;cz=1;$('zoom').value=1;
-  const s=Math.max(480/im.width,480/im.height);cx0=(480-im.width*s)/2;cy0=(480-im.height*s)/2;$('cropTitle').textContent='Attach '+KIDS[cropFor].name+'’s face';drawCrop();$('teamScreen').hidden=true;$('cropScreen').hidden=false;};im.src=rd.result;};rd.readAsDataURL(f);});
+  const s=Math.max(480/im.width,480/im.height);cx0=(480-im.width*s)/2;cy0=(480-im.height*s)/2;$('cropTitle').textContent='Attach '+KIDS[cropFor].name+'’s face';setCropMode(false);drawCrop();$('teamScreen').hidden=true;$('cropScreen').hidden=false;};im.src=rd.result;};rd.readAsDataURL(f);});
 function cropScale(){return Math.max(480/cropImg.width,480/cropImg.height)*cz;}
 function drawCrop(){const c=$('cropCv').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,480,480);const s=cropScale();c.drawImage(cropImg,cx0,cy0,cropImg.width*s,cropImg.height*s);}
 $('zoom').addEventListener('input',e=>{const old=cropScale();cz=+e.target.value;const nw=cropScale();cx0=240-(240-cx0)*nw/old;cy0=240-(240-cy0)*nw/old;drawCrop();});
