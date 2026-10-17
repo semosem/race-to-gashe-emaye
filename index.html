@@ -188,6 +188,54 @@ button.ft-kid{cursor:pointer}button.ft-kid:hover canvas,button.ft-kid:focus-visi
 @media (min-width:1000px) and (min-height:620px){.gen-old img{height:190px}.ft-kid canvas{width:104px;height:122px}.ft-kid .ft-name{font-size:1.15rem}.gen-mid .ft-name{font-size:1.35rem}.gen-old .ft-name{font-size:1.4rem}.ftree{gap:30px}}
 @media (max-width:760px){.ft-kid canvas{width:54px;height:64px}.ft-kid .ft-name,.gen-mid .ft-name{font-size:.9rem}}
 @media (max-height:500px) and (orientation:landscape){.gen-old img{height:68px}.ft-kid canvas{width:50px;height:60px}.ftree{gap:8px}}
+/* End screen: no panel, celebration over the scene */
+#endScreen{background:linear-gradient(rgba(20,8,4,.7),rgba(20,8,4,.35) 40%,rgba(20,8,4,.55) 70%,rgba(20,8,4,.82));align-items:stretch;overflow:hidden}
+.end-stage{justify-content:center;align-items:center;text-align:center;gap:clamp(8px,2.2vh,18px);max-width:760px;position:relative;z-index:1}
+.end-head{display:flex;flex-direction:column;align-items:center;gap:2px}
+.end-head .geez{font-size:clamp(1rem,2.6vw,1.35rem);color:var(--gold);text-shadow:0 2px 0 #2a1405}
+.end-head h1{font-size:clamp(2.3rem,8vw,4.2rem);color:var(--gold2);line-height:1;
+  text-shadow:0 4px 0 #6b3a12,3px 3px 0 #2a1405,-3px 3px 0 #2a1405,3px -2px 0 #2a1405,-3px -2px 0 #2a1405,0 10px 26px rgba(0,0,0,.55)}
+#endScreen:not([hidden]) .end-head h1{animation:pop .7s cubic-bezier(.34,1.56,.64,1) both}
+.end-say{display:flex;align-items:flex-end;gap:4px;width:100%;max-width:640px}
+.end-say img{height:clamp(70px,16vh,120px);width:auto;flex:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))}
+.end-say p{position:relative;margin:0 0 10px 10px;background:var(--cream);color:#3a1d08;border-radius:16px;padding:10px 14px;text-align:left;font-size:clamp(.88rem,2.1vw,1rem);line-height:1.35;box-shadow:0 4px 0 rgba(42,20,5,.45)}
+.end-say p::before{content:"";position:absolute;left:-9px;bottom:14px;border:9px solid transparent;border-right-color:var(--cream);border-left:0}
+.end-say b{color:#7a4a0c}
+.end-letters{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.end-lv{margin:0;font:400 .95rem var(--display);letter-spacing:.06em;color:var(--gold);text-shadow:0 2px 0 #2a1405}
+#endScreen .fidel{display:grid;grid-template-columns:repeat(7,minmax(0,62px));gap:6px;justify-content:center;width:100%}
+#endScreen .fidel span{font-size:clamp(1.3rem,4vw,1.8rem);padding:8px 0 5px;border-radius:12px;background:rgba(30,15,8,.7);color:rgba(251,243,226,.35);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.15)}
+#endScreen .fidel span.got{background:linear-gradient(#ffe39a,#f2b632);color:#3a1d06;box-shadow:0 3px 0 #9c6a14}
+#endScreen:not([hidden]) .fidel span{animation:pop .45s cubic-bezier(.34,1.56,.64,1) both}
+.end-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(30,15,8,.72);border-radius:999px;padding:5px 14px 5px 10px;box-shadow:inset 0 0 0 1.5px rgba(242,182,50,.45)}
+.chip b{font:400 1.15rem var(--display);color:var(--cream);font-variant-numeric:tabular-nums}
+.chip b.star,.chip b.geez{color:var(--gold);font-size:1.05rem}
+.chip img{height:18px;width:auto}
+.chip small{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.end-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;width:100%}
+.end-btns button{min-width:0}
+#nextBtn,.end-btns button:not(.ghost){font-size:1.25rem;padding:12px 26px}
+.end-btns .ghost{background:rgba(30,15,8,.72)}
+@keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:none;opacity:1}}
+.confetti{position:absolute;inset:0;pointer-events:none;z-index:0}
+.confetti i{position:absolute;top:-16px;width:9px;height:14px;border-radius:2px;opacity:.95;animation:fall linear forwards}
+@keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--r))}}
+@media (prefers-reduced-motion:reduce){.confetti{display:none}#endScreen .fidel span,#endScreen .end-head h1{animation:none!important}}
+@media (max-width:560px){
+  .end-btns{display:grid;grid-template-columns:1fr 1fr}.end-btns button:not(.ghost){grid-column:1/-1}
+  .end-btns button[hidden]{display:none}.end-say p::before{bottom:12px}
+  .chip small{display:none}.chip{padding:4px 12px 4px 9px}.end-btns .ghost{font-size:.92rem;padding:10px 8px}
+}
+@media (max-height:500px) and (orientation:landscape){
+  .end-stage{gap:6px;max-width:900px;display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"head head" "say letters" "say stats" "btns btns";align-items:center;column-gap:16px}
+  .end-head{grid-area:head;flex-direction:row;gap:12px;justify-content:center;align-items:baseline}.end-head h1{font-size:clamp(1.8rem,8vh,2.4rem)}
+  .end-say{grid-area:say;align-self:center}.end-say img{height:clamp(60px,24vh,96px)}.end-say p{font-size:.82rem;padding:8px 11px}
+  .end-letters{grid-area:letters}.end-stats{grid-area:stats}.end-btns{grid-area:btns}
+  #endScreen .fidel{grid-template-columns:repeat(7,minmax(0,44px));gap:4px}#endScreen .fidel span{font-size:1.15rem;padding:5px 0 3px}#endScreen .fidel small{font-size:.6rem;margin-top:2px}
+  .chip{padding:3px 10px 3px 8px}.chip b{font-size:.95rem}.chip small{display:none}
+  #nextBtn,.end-btns button:not(.ghost){font-size:1.05rem;padding:9px 18px}.end-btns .ghost{font-size:.9rem;padding:9px 14px}
+}
 /* phones held sideways: short screens */
 @media (max-height:500px) and (orientation:landscape){
   .logo{padding-top:0;gap:2px}.logo h1{font-size:clamp(1.7rem,6vh,2.4rem)}.logo h1 span{display:inline}
@@ -306,20 +354,26 @@ button.ft-kid{cursor:pointer}button.ft-kid:hover canvas,button.ft-kid:focus-visi
   </div>
 
   <div class="overlay" id="endScreen" hidden>
-    <div class="card wide">
-      <p class="geez" id="endGeez">እንኳን ደህና መጣችሁ!</p>
-      <h1 id="endTitle">Welcome home!</h1>
-      <div class="say"><img id="endImg" src="assets/emaye.webp" alt=""><p id="endSay"></p></div>
-      <div class="stats">
-        <div><b id="sScore">0</b><span>Score</span></div>
-        <div><b id="sBeans">0</b><span>Beans</span></div>
-        <div><b id="sLetters">0</b><span>Fidel letters</span></div>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+    <div class="stage end-stage">
+      <div class="end-head">
+        <p class="geez" id="endGeez">እንኳን ደህና መጣችሁ!</p>
+        <h1 id="endTitle">Welcome home!</h1>
       </div>
-      <h2 id="lettersHead">Letters learned</h2>
-      <div class="fidel" id="fidelGrid"></div>
-      <div class="row"><button id="nextBtn" type="button" hidden>Next level</button><button id="againBtn" type="button">Race again</button><button id="endTeamBtn" type="button" class="ghost">Choose another runner</button></div>
+      <div class="end-say"><img id="endImg" src="assets/emaye.webp" alt=""><p id="endSay"></p></div>
+      <div class="end-letters">
+        <p class="end-lv" id="lettersHead">Letters learned</p>
+        <div class="fidel" id="fidelGrid"></div>
+      </div>
+      <div class="end-stats">
+        <span class="chip"><b class="star">★</b><b id="sScore">0</b><small>score</small></span>
+        <span class="chip"><img src="assets/bean.webp" alt=""><b id="sBeans">0</b><small>beans</small></span>
+        <span class="chip"><b class="geez" id="sKey">ሀ</b><b id="sLetters">0</b><small>letters</small></span>
+      </div>
+      <div class="end-btns"><button id="nextBtn" type="button" hidden>Next level</button><button id="againBtn" type="button">Race again</button><button id="endTeamBtn" type="button" class="ghost">Choose another runner</button></div>
     </div>
   </div>
+</div>
 </div>
 
 <script>
@@ -494,8 +548,13 @@ function gotLetter(l){const [ch,tr]=FIDEL[l.i];let fresh=false;if(l.i===letterId
   score+=50;timers.fidel=3;sfx.letter();speakLetter(ch,FIDEL[l.i][2]);popup={ch,tr,t:1.6};burst(l.x,l.y,18,'#ffd77a',260);
   if(fresh&&gotLetters.length===FIDEL.length){if(hearts<5)hearts++;say('tirunesh','You found the whole '+LEVELS[lv].name+'! ❤',2.6);}}
 function finishStats(){$('sScore').textContent=Math.round(score);$('sBeans').textContent=beans;$('sLetters').textContent=gotLetters.length+' / '+FIDEL.length;
-  $('fidelGrid').replaceChildren(...FIDEL.map(([ch,tr],i)=>{const s=document.createElement('span');s.textContent=ch;const sm=document.createElement('small');sm.textContent=tr;s.append(sm);if(gotLetters.includes(i))s.className='got';return s;}));
+  $('fidelGrid').replaceChildren(...FIDEL.map(([ch,tr],i)=>{const s=document.createElement('span');s.textContent=ch;const sm=document.createElement('small');sm.textContent=tr;s.append(sm);s.style.animationDelay=(.35+i*.09)+'s';if(gotLetters.includes(i))s.className='got';return s;}));$('sKey').textContent=LEVELS[lv].key;
   $('lettersHead').textContent='Level '+(lv+1)+' · '+LEVELS[lv].name;}
+function celebrate(won){const box=$('confetti');box.replaceChildren();
+  const target=Math.round(score),el=$('sScore'),t0=performance.now();const tick=n=>{const k=Math.min(1,(n-t0)/1100);el.textContent=Math.round(target*(1-(1-k)**3));if(k<1&&!$('endScreen').hidden)requestAnimationFrame(tick);};el.textContent='0';requestAnimationFrame(tick);
+  if(!won||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const cols=['#1f6b33','#f2b632','#c0392b','#ffd77a','#fbf3e2'];for(let i=0;i<70;i++){const c=document.createElement('i');c.style.left=(Math.random()*100)+'%';c.style.background=cols[i%cols.length];
+    c.style.setProperty('--dx',(Math.random()*160-80)+'px');c.style.setProperty('--r',(Math.random()*900-450)+'deg');c.style.animationDuration=(2.4+Math.random()*2.2)+'s';c.style.animationDelay=(Math.random()*1.4)+'s';if(i%3===0){c.style.width='7px';c.style.height='7px';c.style.borderRadius='50%';}box.append(c);}}
 function win(){state='win';endT=0;$('pauseBtn').hidden=true;sfx.power();finishStats();burst(P.x+120,GY-160,40,'#ffd77a',360);
   $('endGeez').textContent='እንኳን ደህና መጣችሁ!';$('endTitle').textContent='Welcome home!';$('endImg').src='assets/emaye.webp';
   const pl=pick==='nahome',all=gotLetters.length===FIDEL.length;if(all)store.set('done_'+lv,'1');
@@ -503,11 +562,11 @@ function win(){state='win';endT=0;$('pauseBtn').hidden=true;sfx.power();finishSt
   const nx=$('nextBtn'),last=lv>=LEVELS.length-1;nx.hidden=false;
   if(!last){nx.textContent='Next level: '+LEVELS[lv+1].forms.slice(0,3).map(f=>f[0]).join(' ')+' …';nx.dataset.to=lv+1;$('againBtn').textContent='Play this level again';}
   else{nx.textContent='Start again from ሀ';nx.dataset.to=0;$('againBtn').textContent='Play this level again';$('endTitle').textContent='All levels done!';}
-  later(1600,()=>{if(state==='win')show('endScreen');});}
-function lose(){state='over';$('pauseBtn').hidden=true;finishStats();$('nextBtn').hidden=true;$('againBtn').textContent='Try again';
+  $('againBtn').classList.add('ghost');later(1600,()=>{if(state==='win'){show('endScreen');celebrate(true);}});}
+function lose(){state='over';$('pauseBtn').hidden=true;finishStats();$('nextBtn').hidden=true;$('againBtn').classList.remove('ghost');$('againBtn').textContent='Try again';
   $('endGeez').textContent='በርቱ!';$('endTitle').textContent='So close!';$('endImg').src='assets/gashe.webp';
   $('endSay').innerHTML='<b>Gashe Kidane:</b> '+leg().label+' ran bravely. Try again, Emaye will keep the dabo warm for you.';
-  later(900,()=>{if(state==='over')show('endScreen');});}
+  later(900,()=>{if(state==='over'){show('endScreen');celebrate(false);}});}
 
 // ---------- drawing ----------
 function coin(x,y,ch,r=24){const g=ctx.createRadialGradient(x-r*.3,y-r*.3,2,x,y,r);g.addColorStop(0,'#fff3c0');g.addColorStop(.55,'#f6c445');g.addColorStop(1,'#a8690e');
