@@ -102,7 +102,7 @@ body.rot #rotate{display:flex}
 @media (prefers-reduced-motion:reduce){#rotate .phone{animation:none;transform:rotate(-90deg)}}
 /* Runner select: no panel, everything sits on the scenery */
 #teamScreen{background:linear-gradient(rgba(20,8,4,.62),rgba(20,8,4,.12) 32%,rgba(20,8,4,.05) 60%,rgba(20,8,4,.55));align-items:stretch}
-.stage{width:100%;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-height:100%}
+.stage{width:100%;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:8px;min-height:100%}
 .stage-top{display:grid;grid-template-columns:44px 1fr 44px;grid-template-areas:"back title ." "lv lv lv";align-items:center;row-gap:10px}
 .stage-top h1{grid-area:title;text-align:center;font-size:clamp(1.6rem,4.4vw,2.6rem);color:var(--gold2);
   text-shadow:0 3px 0 #6b3a12,0 0 2px #2a1405,2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 6px 18px rgba(0,0,0,.55)}
@@ -112,7 +112,16 @@ body.rot #rotate{display:flex}
 .lvl{background:rgba(30,15,8,.7)!important;color:var(--cream)!important;box-shadow:inset 0 0 0 2px rgba(242,182,50,.55)!important}
 .lvl[aria-pressed="true"]{background:linear-gradient(#ffd77a,#f2b632)!important;color:#2a1405!important;box-shadow:0 3px 0 #9c6a14!important}
 #teamScreen .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:4px 6px;align-items:end}
-#teamScreen .mate{background:none;box-shadow:none;padding:4px 2px 2px;gap:2px;position:relative;border-radius:0}
+#teamScreen .mate{background:none;box-shadow:none;padding:4px 2px 6px;gap:2px;position:relative;border-radius:14px;display:flex;flex-direction:column;align-items:center;
+  font:inherit;color:inherit;cursor:pointer;min-height:0}
+#teamScreen .mate:active{transform:none;box-shadow:none}
+#teamScreen .mate:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
+#teamScreen .mate.on b{color:var(--gold2)}
+#teamScreen .mate.on .pw b{color:var(--cream)}
+#teamScreen .team{margin-top:auto}
+.go{display:flex;justify-content:center;padding-bottom:4px}
+#teamScreen .mate.on::before{opacity:1;box-shadow:0 0 18px 6px rgba(255,215,122,.35)}
+#goBtn{font-size:1.35rem;padding:12px 34px;min-width:240px}
 #teamScreen .mate canvas{width:120px;height:140px;position:relative;z-index:1;filter:drop-shadow(0 4px 4px rgba(0,0,0,.35));transition:transform .15s}
 #teamScreen .mate::before{content:"";position:absolute;left:50%;top:132px;width:96px;height:16px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(rgba(0,0,0,.45),transparent 70%)}
 #teamScreen .mate.on::before{background:radial-gradient(rgba(255,215,122,.95),rgba(242,182,50,.35) 55%,transparent 72%);width:120px;height:22px;top:128px}
@@ -127,9 +136,6 @@ body.rot #rotate{display:flex}
 #teamScreen .mate b{font-size:1.25rem;color:var(--cream);text-shadow:2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 3px 8px rgba(0,0,0,.6)}
 #teamScreen .mate .pw b{font-family:var(--display);font-weight:400;font-size:.9rem;color:var(--gold2)}
 #teamScreen .mate .d{display:none}
-#teamScreen .fig{position:relative;width:120px;height:140px;cursor:pointer}
-#teamScreen .fig canvas{display:block}
-#teamScreen .mate .play{width:104px;margin-top:6px}
 .face{position:absolute;z-index:2;width:30px;height:30px;min-height:30px;padding:0;border-radius:50%;display:grid;place-items:center;transform:translate(-50%,-50%);
   background:rgba(30,15,8,.82) center/cover no-repeat;color:var(--gold2);box-shadow:inset 0 0 0 2px var(--gold),0 2px 6px rgba(0,0,0,.4)}
 .face:active{transform:translate(-50%,-50%) scale(.94);box-shadow:inset 0 0 0 2px var(--gold)}
@@ -151,16 +157,16 @@ body.rot #rotate{display:flex}
   button{font-size:1.05rem;padding:9px 16px}
   #teamScreen .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:2px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   #teamScreen .team::-webkit-scrollbar{display:none}
-  #teamScreen .team{padding-top:24px;margin-top:-18px}
+  #teamScreen .team{padding-top:14px;margin-top:-10px}
   .stage{gap:6px}
   .stage-top{grid-template-columns:40px 1fr auto;grid-template-areas:"back title lv";column-gap:10px}
   .stage-top h1{font-size:1.45rem;text-align:left}
   .back{width:40px;height:40px;min-height:40px}
   .lvl{font-size:.78rem;padding:6px 9px}
   #teamScreen .mate{flex:0 0 132px;scroll-snap-align:start}
-  #teamScreen .fig,#teamScreen .mate canvas{width:96px;height:112px}
-  #teamScreen .mate .play{width:92px;margin-top:4px}
-  .face{width:28px;height:28px;min-height:28px}
+  #teamScreen .mate canvas{width:96px;height:112px}
+  .go{padding-bottom:2px}
+  #goBtn{font-size:1.05rem;padding:8px 22px;min-width:200px;min-height:40px}
   #teamScreen .mate::before{top:104px;width:80px}
   #teamScreen .mate.on::before{top:100px;width:100px}
   #teamScreen .mate b{font-size:1.05rem}
@@ -214,7 +220,8 @@ body.rot #rotate{display:flex}
         <h1>Choose your runner</h1>
         <div class="row" id="levels"></div>
       </div>
-      <div class="team" id="team"></div>
+      <div class="team" id="team" role="radiogroup" aria-label="Runners"></div>
+      <div class="go"><button id="goBtn" type="button">Start running</button></div>
     </div>
   </div>
 
@@ -530,18 +537,12 @@ function buildLevels(){$('levels').replaceChildren(...LEVELS.map((L,i)=>{const b
   b.innerHTML='<span class="geez">'+L.forms[0][0]+' '+L.forms[1][0]+' '+L.forms[2][0]+' …</span>'+(store.get('done_'+i)?' ✓':'');b.setAttribute('aria-label','Level '+(i+1)+': '+L.name);b.addEventListener('click',()=>{lv=i;store.set('level',i);buildLevels();});return b;}));}
 const CAM='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 4.5 7.6 6.5H5a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5a2 2 0 0 0-2-2h-2.6L15 4.5H9Zm3 4a4.25 4.25 0 1 1 0 8.5 4.25 4.25 0 0 1 0-8.5Zm0 2a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"/></svg>';
 function faceAction(id){cropFor=id;if(FACES[id])openManage(id);else{$('faceFile').value='';$('faceFile').click();}}
-function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{const K=KIDS[key];const d=document.createElement('div');d.className='mate'+(key===pick?' on':'');
-  const fig=document.createElement('div');fig.className='fig';const cv2=mateCanvas(key);fig.append(cv2);
-  for(const f of (cv2._faces||[])){const bt=document.createElement('button');bt.type='button';bt.className='face'+(FACES[f.id]?' has':'');
-    bt.style.left=((f.x+f.r*.9)/120*100)+'%';bt.style.top=((f.y-f.r*1.6)/140*100)+'%';
-    bt.setAttribute('aria-label',(FACES[f.id]?'Change ':'Add ')+KIDS[f.id].name+'’s face');bt.title=bt.getAttribute('aria-label');
-    if(FACES[f.id])bt.style.backgroundImage='url('+FACES[f.id].src+')';else bt.innerHTML=CAM;
-    if(key==='nahome')bt.insertAdjacentHTML('beforeend','<span class="tag">'+KIDS[f.id].name+'</span>');
-    bt.addEventListener('click',e=>{e.stopPropagation();faceAction(f.id);});fig.append(bt);}
-  fig.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});
-  d.append(fig);d.insertAdjacentHTML('beforeend',`<b>${K.name}</b><span class="pw">${ROLE[key]}</span>`);
-  const pb=document.createElement('button');pb.type='button';pb.className='small play';pb.textContent='Play';pb.setAttribute('aria-label','Play as '+CHARS[key].label);
-  pb.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});d.append(pb);return d;}));}
+function selectRunner(key){pick=key;store.set('pick',key);document.querySelectorAll('#team .mate').forEach(m=>{const on=m.dataset.key===key;m.classList.toggle('on',on);m.setAttribute('aria-checked',on);});
+  $('goBtn').textContent='Run as '+CHARS[key].label;quickLabel();}
+function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{const K=KIDS[key];const d=document.createElement('button');d.type='button';d.className='mate';d.dataset.key=key;d.setAttribute('role','radio');
+  d.append(mateCanvas(key));d.insertAdjacentHTML('beforeend',`<b>${K.name}</b><span class="pw">${ROLE[key]}</span>`);
+  d.addEventListener('click',()=>selectRunner(key));d.addEventListener('dblclick',start);return d;}));selectRunner(pick);}
+$('goBtn').addEventListener('click',start);
 function setCropMode(manage){$('cropRow').hidden=manage;$('manageRow').hidden=!manage;$('zoom').hidden=manage;document.querySelector('label[for=zoom]').hidden=manage;}
 function openManage(id){const c=$('cropCv').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,480,480);c.drawImage(FACES[id],70,70,340,340);
   $('cropTitle').textContent=KIDS[id].name+'’s face';setCropMode(true);$('teamScreen').hidden=true;$('cropScreen').hidden=false;}
