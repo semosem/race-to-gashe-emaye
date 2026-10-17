@@ -71,6 +71,7 @@ button.small.ghost{box-shadow:inset 0 0 0 1.5px var(--muted)}
 .mate b{font-family:var(--display);font-weight:400;font-size:1.15rem;color:var(--cream)}
 .mate .age{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .mate .pw{font-size:.82rem;color:var(--gold2);line-height:1.3}
+.mate .pw b{font-family:var(--body);font-weight:800;font-size:.85rem;color:var(--gold2)}
 .mate .row{gap:6px;margin-top:4px}
 .fam{font-size:.85rem}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-variant-numeric:tabular-nums}
@@ -89,7 +90,46 @@ button.small.ghost{box-shadow:inset 0 0 0 1.5px var(--muted)}
 #cropBox canvas{width:240px;height:240px;display:block}
 #cropBox::after{content:"";position:absolute;inset:0;border-radius:12px;background:radial-gradient(circle at 50% 50%,transparent 0 84px,rgba(0,0,0,.6) 85px);pointer-events:none}
 input[type=range]{width:100%;accent-color:var(--gold)}
-@media (max-height:430px){.card{padding:20px 16px 14px;gap:9px}#lineup{height:110px}h1{font-size:1.9rem}}
+.tl,.tr{display:flex;flex-direction:column;gap:12px;min-width:0}
+#wrap{-webkit-touch-callout:none}
+button{min-height:44px}
+button.small{min-height:36px}
+#rotate{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:rgba(20,8,4,.92);z-index:5;text-align:center;padding:24px}
+#rotate p{font-family:var(--display);font-size:1.4rem;color:var(--gold2);max-width:16em}
+#rotate .phone{width:46px;height:80px;border:4px solid var(--gold2);border-radius:10px;animation:turn 2s ease-in-out infinite}
+@keyframes turn{0%,20%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
+body.rot #rotate{display:flex}
+@media (prefers-reduced-motion:reduce){#rotate .phone{animation:none;transform:rotate(-90deg)}}
+/* phones held sideways: short screens */
+@media (max-height:500px) and (orientation:landscape){
+  .overlay{padding:8px max(12px,env(safe-area-inset-left,0px))}
+  .card{padding:18px 16px 12px;gap:8px;border-radius:12px}
+  .card::before{height:9px;background-size:auto 9px}
+  h1{font-size:1.65rem}
+  p{font-size:.9rem;line-height:1.4}
+  .card.title{max-width:820px;display:grid;grid-template-columns:1.15fr 1fr;column-gap:18px;align-items:center;text-align:left}
+  .card.title .row{justify-content:flex-start}
+  .card.title .tl{text-align:center}
+  #lineup{height:clamp(100px,34vh,150px)}
+  .hint{font-size:.8rem}
+  button{font-size:1.05rem;padding:9px 16px}
+  .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+  .mate{flex:0 0 176px;scroll-snap-align:start;padding:8px;gap:2px}
+  .mate .d,#teamScreen .card>p,#teamScreen h2{display:none}
+  #teamScreen h1{font-size:1.4rem}
+  .mate .row{flex-wrap:nowrap}
+  .mate button.small{padding:6px 8px;font-size:.8rem}
+  .mate canvas{width:84px;height:98px}
+  .mate .pw{font-size:.75rem}
+  .fam{display:none}
+  #teamScreen .card>p{font-size:.8rem}
+  .say img{height:56px}
+  .stats b{font-size:1.3rem}
+  .fidel span{font-size:1.3rem;padding:6px 0 4px}
+  #cropBox,#cropBox canvas{width:min(240px,48vh);height:min(240px,48vh)}
+}
+#cropBox::after{background:radial-gradient(circle at 50% 50%,transparent 0 35%,rgba(0,0,0,.6) 35.4%)!important}
+@media (max-width:560px) and (orientation:portrait){h1{font-size:1.8rem}.mate canvas{width:100px;height:117px}}
 </style>
 
 </head>
@@ -99,17 +139,26 @@ input[type=range]{width:100%;accent-color:var(--gold)}
   <button id="pauseBtn" type="button" aria-label="Pause" hidden>II</button>
 
   <div class="overlay" id="titleScreen">
-    <div class="card">
+    <div class="card title">
+      <div class="tl">
       <p class="geez">የልጅ ልጆች · The Grandchildren</p>
       <h1>Race to Gashe &amp; Emaye's</h1>
       <canvas id="lineup"></canvas>
+      </div>
+      <div class="tr">
       <p>Pick a runner and race across the Ethiopian highlands to reach Gashe Kidane and Emaye Tirunesh before Emaye's warm dabo comes out of the oven. Collect beans and golden Fidel letters on the way.</p>
       <div class="row">
         <button id="startBtn" type="button">Choose your runner</button>
         <button id="quickBtn" type="button" class="ghost">Play as Kalkidan</button>
       </div>
-      <p class="hint">Tap or press Space to jump, and tap again in the air to double jump. Level 1 teaches the ሀ family and Level 2 the ለ family; every letter you collect is read aloud and gives you golden power.</p>
+      <p class="hint">Tap anywhere to jump, tap again in the air to double jump. Every Fidel letter you collect is read aloud and gives you golden power.</p>
+      </div>
     </div>
+  </div>
+
+  <div id="rotate" role="status">
+    <div class="phone" aria-hidden="true"></div>
+    <p>Turn your phone sideways to keep running</p>
   </div>
 
   <div class="overlay" id="teamScreen" hidden>
@@ -219,7 +268,7 @@ function bake(key,animKey,label,color){const m=META[key][animKey];const src=IMG[
 
 // ---------- canvas ----------
 const cv=$('c'),ctx=cv.getContext('2d');const H=540,GY=468;let W=960,dpr=1,k=1;
-function resize(){const r=cv.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2.5);cv.width=Math.max(1,Math.round(r.width*dpr));cv.height=Math.max(1,Math.round(r.height*dpr));k=r.height/H;W=r.width/k;}
+let uiS=1;function resize(){const r=cv.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2.5);cv.width=Math.max(1,Math.round(r.width*dpr));cv.height=Math.max(1,Math.round(r.height*dpr));k=r.height/H;W=r.width/k;uiS=Math.min(1.6,Math.max(1,.92/k));}
 addEventListener('resize',()=>{resize();drawLineup();});
 
 function layer(img,y,h,off){if(!img)return;const s=h/img.height,w=img.width*s;let x=-((off%w)+w)%w;for(;x<W;x+=w)ctx.drawImage(img,x,y,w+1,h);}
@@ -397,10 +446,16 @@ function frame(){ctx.setTransform(dpr*k,0,0,dpr*k,0,0);if(shake>0){ctx.translate
     if(hasPower('shield')&&shieldUp&&state==='play'){ctx.strokeStyle='rgba(255,215,122,.8)';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(P.x,P.y-sprH(spr)*.5,sprH(spr)*.36,sprH(spr)*.58,0,0,7);ctx.stroke();}
     if(P.tagT>0&&state==='play'){ctx.globalAlpha=Math.min(1,P.tagT);ctx.font='17px "Lilita One",sans-serif';const lab=L.label;const w=ctx.measureText(lab).width+20;ctx.fillStyle='rgba(30,15,8,.85)';rr(P.x-w/2,P.y-sprH(spr)-34,w,26,13);ctx.fill();ctx.fillStyle='#ffd77a';ctx.textAlign='center';ctx.fillText(lab,P.x,P.y-sprH(spr)-20);ctx.globalAlpha=1;}}
   for(const p of fx){ctx.globalAlpha=Math.min(1,p.l*2);ctx.fillStyle=p.c;if(p.star){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(t*4);ctx.fillRect(-p.s,-p.s/4,p.s*2,p.s/2);ctx.fillRect(-p.s/4,-p.s,p.s/2,p.s*2);ctx.restore();}else{ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,7);ctx.fill();}}ctx.globalAlpha=1;
-  if(state==='play'){hud();}drawBubble();drawBanner();drawPopup();}
+  ctx.save();ctx.scale(uiS,uiS);const Wfull=W;W=W/uiS;try{if(state==='play'){hud();}drawBubble();drawBanner();drawPopup();}finally{W=Wfull;ctx.restore();}}
 
 let last=performance.now();
-function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;if(state!=='paused')update(dt);frame();requestAnimationFrame(loop);}
+const portrait=()=>matchMedia('(orientation: portrait) and (max-width: 760px)').matches;
+function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;
+  const block=portrait()&&(state==='play'||state==='rot');document.body.classList.toggle('rot',block);
+  if(state==='play'&&block)state='rot';else if(state==='rot'&&!block){state='play';last=now;}
+  if(state!=='paused'&&state!=='rot')update(dt);frame();requestAnimationFrame(loop);}
+function goFull(){try{if(!matchMedia('(pointer: coarse)').matches)return;const el=document.documentElement;if(document.fullscreenElement||!el.requestFullscreen)return;
+  el.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}).catch(()=>{});}catch(e){}}
 
 // ---------- title lineup ----------
 function drawLineup(){const c=$('lineup');if(!c||!SHEET.kalkidan_run)return;const r=c.getBoundingClientRect();if(!r.width)return;const d=Math.min(devicePixelRatio||1,2.5);c.width=r.width*d;c.height=r.height*d;
@@ -418,12 +473,12 @@ function mateCanvas(key){const c=document.createElement('canvas');const d=2;c.wi
   x.drawImage(sh.c,0,0,m.fw,m.fh,dx,dy,w,h);
   const ids=src==='nahome'?['nahome','meba']:[key];(m.face&&m.face[0]||[]).forEach(([fx,fy,fr],j)=>{const im=FACES[ids[j]];if(!im)return;const px=dx+fx*s,py=dy+fy*s,r=fr*s*1.28;x.save();x.beginPath();x.arc(px,py,r,0,7);x.clip();x.drawImage(im,px-r,py-r,r*2,r*2);x.restore();});
   return c;}
-const ROLE={meba:'Rides on Nahome’s shoulders'};for(const k of ORDER)ROLE[k]=CHARS[k].powerName+' · '+CHARS[k].desc;
+const ROLE={meba:'<b>Rides with Nahome</b>'};for(const k of ORDER)ROLE[k]='<b>'+CHARS[k].powerName+'</b><span class="d"> · '+CHARS[k].desc+'</span>';
 function buildLevels(){$('levels').replaceChildren(...LEVELS.map((L,i)=>{const b=document.createElement('button');b.type='button';b.className='small ghost lvl';b.setAttribute('aria-pressed',i===lv);
   b.innerHTML='Level '+(i+1)+' · <span class="geez">'+L.forms.map(f=>f[0]).join(' ')+'</span>'+(store.get('done_'+i)?' ✓':'');b.addEventListener('click',()=>{lv=i;store.set('level',i);buildLevels();});return b;}));}
 function buildTeam(){buildLevels();$('team').replaceChildren(...['afomia','emmu','eldana','bethani','kalkidan','kiru','nahome','meba'].map(key=>{const K=KIDS[key];const d=document.createElement('div');d.className='mate'+(key===pick?' on':'');
   d.append(mateCanvas(key));d.insertAdjacentHTML('beforeend',`<b>${K.name}</b><span class="pw">${ROLE[key]}</span>`);
-  const row=document.createElement('div');row.className='row';if(CHARS[key]){const pb=document.createElement('button');pb.type='button';pb.className='small';pb.textContent='Play as '+K.name;pb.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});row.append(pb);}const a=document.createElement('button');a.type='button';a.className='small ghost';a.textContent=FACES[key]?'Change face':'Attach face';
+  const row=document.createElement('div');row.className='row';if(CHARS[key]){const pb=document.createElement('button');pb.type='button';pb.className='small';pb.textContent='Play';pb.setAttribute('aria-label','Play as '+K.name);pb.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});row.append(pb);}const a=document.createElement('button');a.type='button';a.className='small ghost';a.textContent=FACES[key]?'Change face':'Add face';
   a.addEventListener('click',()=>{cropFor=key;$('faceFile').value='';$('faceFile').click();});row.append(a);
   if(FACES[key]){const r=document.createElement('button');r.type='button';r.className='small ghost';r.textContent='Remove';r.addEventListener('click',()=>{store.del('face_'+key);delete FACES[key];buildTeam();drawLineup();});row.append(r);}
   d.append(row);return d;}));}
@@ -444,7 +499,7 @@ $('cropCancel').addEventListener('click',()=>{$('cropScreen').hidden=true;$('tea
 
 // ---------- flow ----------
 function show(id){for(const s of ['titleScreen','teamScreen','cropScreen','pauseScreen','endScreen'])$(s).hidden=s!==id;}
-function start(){ac();reset();state='play';show(null);$('pauseBtn').hidden=false;}
+function start(){goFull();ac();reset();state='play';show(null);$('pauseBtn').hidden=false;}
 $('startBtn').addEventListener('click',()=>{buildTeam();show('teamScreen');});$('againBtn').addEventListener('click',start);$('nextBtn').addEventListener('click',()=>{lv=Math.min(LEVELS.length-1,lv+1);store.set('level',lv);start();});
 function quickLabel(){$('quickBtn').textContent='Play as '+KIDS[pick].name;}quickLabel();$('quickBtn').addEventListener('click',start);
 $('endTeamBtn').addEventListener('click',()=>{buildTeam();state='title';show('teamScreen');});
