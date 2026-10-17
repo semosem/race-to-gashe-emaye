@@ -59,7 +59,23 @@ button.ghost{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 2p
 button.small{font-size:.85rem;padding:7px 10px;box-shadow:0 3px 0 #9c6a14}
 button.small.ghost{box-shadow:inset 0 0 0 1.5px var(--muted)}
 .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-#lineup{width:100%;height:150px}
+#lineup{width:100%;height:clamp(150px,34vh,260px);display:block}
+/* Title: no panel, logo over the sky, runners on the path, buttons below */
+#titleScreen{background:linear-gradient(rgba(20,8,4,.55),rgba(20,8,4,.05) 38%,rgba(20,8,4,.05) 62%,rgba(20,8,4,.6));align-items:stretch}
+.title-stage{justify-content:space-between;align-items:center;text-align:center}
+.logo{display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:clamp(4px,3vh,28px)}
+.logo .geez{font-size:clamp(1rem,2.6vw,1.4rem);color:var(--gold);text-shadow:0 2px 0 #2a1405,0 0 12px rgba(0,0,0,.5)}
+.logo h1{font-size:clamp(2.1rem,7vw,4.6rem);line-height:.95;color:var(--gold2);
+  text-shadow:0 4px 0 #6b3a12,3px 3px 0 #2a1405,-3px 3px 0 #2a1405,3px -2px 0 #2a1405,-3px -2px 0 #2a1405,0 10px 26px rgba(0,0,0,.55)}
+.logo h1 span{display:block}
+.logo .tag{color:var(--cream);font-size:clamp(.9rem,2vw,1.1rem);text-shadow:1px 1px 0 #2a1405,-1px 1px 0 #2a1405,0 2px 8px rgba(0,0,0,.7)}
+.logo .tag .geez{font-size:1em;color:var(--gold2)}
+#titleScreen #lineup{margin-top:auto}
+.menu{display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:6px;width:100%}
+#quickBtn{font-size:1.45rem;padding:13px 40px;min-width:260px}
+.menu .ghost{background:rgba(30,15,8,.72)}
+/* Family tree */
+#treeScreen{background:linear-gradient(rgba(20,8,4,.7),rgba(20,8,4,.45));align-items:stretch}
 .hint{font-size:.85rem}
 .team{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
 .lvl[aria-pressed="true"]{background:linear-gradient(#ffd77a,#f2b632);color:#2a1405;box-shadow:0 3px 0 #9c6a14}
@@ -154,17 +170,37 @@ body.rot #rotate{display:flex}
   .go{padding:6px 16px 0}
   #goBtn{width:100%;max-width:340px}
 }
+}
+.ftree-wrap{flex:1;overflow:auto;display:flex;padding:4px 4px 12px;-webkit-overflow-scrolling:touch}
+.ftree{margin:auto;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,3vh,26px);width:100%}
+.gen{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:6px clamp(14px,3vw,34px)}
+.kin{display:flex;align-items:flex-end;gap:2px}
+.gen figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.gen-old img{height:clamp(84px,19vh,150px);width:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
+.ft-name{font:400 1rem var(--display);color:var(--cream);white-space:nowrap;text-shadow:2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405}
+.gen-old .ft-name{font-size:1.15rem;color:var(--gold2)}
+.gen-mid{max-width:860px}.gen-mid .ft-name{font-size:1.1rem}
+.ft-kid{display:flex;flex-direction:column;align-items:center;background:none;box-shadow:none;padding:0 2px;font:inherit;color:inherit;min-height:0;border-radius:10px}
+.ft-kid canvas{width:72px;height:84px;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+button.ft-kid{cursor:pointer}button.ft-kid:hover canvas,button.ft-kid:focus-visible canvas{transform:scale(1.14)}button.ft-kid:active{transform:none;box-shadow:none}
+.gen-old .kin{gap:clamp(14px,4vw,40px)}.gen-kids{gap:6px clamp(20px,4vw,48px)}
+@media (min-width:1000px) and (min-height:620px){.gen-old img{height:190px}.ft-kid canvas{width:104px;height:122px}.ft-kid .ft-name{font-size:1.15rem}.gen-mid .ft-name{font-size:1.35rem}.gen-old .ft-name{font-size:1.4rem}.ftree{gap:30px}}
+@media (max-width:760px){.ft-kid canvas{width:54px;height:64px}.ft-kid .ft-name,.gen-mid .ft-name{font-size:.9rem}}
+@media (max-height:500px) and (orientation:landscape){.gen-old img{height:68px}.ft-kid canvas{width:50px;height:60px}.ftree{gap:8px}}
 /* phones held sideways: short screens */
+@media (max-height:500px) and (orientation:landscape){
+  .logo{padding-top:0;gap:2px}.logo h1{font-size:clamp(1.7rem,6vh,2.4rem)}.logo h1 span{display:inline}
+  .logo .tag{font-size:.82rem}
+  #titleScreen #lineup{height:clamp(110px,38vh,170px)}
+  .menu{flex-direction:row;justify-content:center;gap:8px}.menu .row{flex-wrap:nowrap}
+  #quickBtn{font-size:1.1rem;padding:9px 22px;min-width:0}
+}
 @media (max-height:500px) and (orientation:landscape){
   .overlay{padding:8px max(12px,env(safe-area-inset-left,0px))}
   .card{padding:18px 16px 12px;gap:8px;border-radius:12px}
   .card::before{height:9px;background-size:auto 9px}
   h1{font-size:1.65rem}
   p{font-size:.9rem;line-height:1.4}
-  .card.title{max-width:820px;display:grid;grid-template-columns:1.15fr 1fr;column-gap:18px;align-items:center;text-align:left}
-  .card.title .row{justify-content:flex-start}
-  .card.title .tl{text-align:center}
-  #lineup{height:clamp(100px,34vh,150px)}
   .hint{font-size:.8rem}
   button{font-size:1.05rem;padding:9px 16px}
   #teamScreen .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:2px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -203,20 +239,30 @@ body.rot #rotate{display:flex}
   <button id="pauseBtn" type="button" aria-label="Pause" hidden>II</button>
 
   <div class="overlay" id="titleScreen">
-    <div class="card title">
-      <div class="tl">
-      <p class="geez">የልጅ ልጆች · The Grandchildren</p>
-      <h1>Race to Gashe &amp; Emaye's</h1>
-      <canvas id="lineup"></canvas>
+    <div class="stage title-stage">
+      <div class="logo">
+        <p class="geez">የልጅ ልጆች</p>
+        <h1>Race to <span>Gashe &amp; Emaye's</span></h1>
+        <p class="tag">Race home across the highlands and learn the <span class="geez">ፊደል</span> on the way</p>
       </div>
-      <div class="tr">
-      <p>Pick a runner and race across the Ethiopian highlands to reach Gashe Kidane and Emaye Tirunesh before Emaye's warm dabo comes out of the oven. Collect beans and golden Fidel letters on the way.</p>
-      <div class="row">
-        <button id="startBtn" type="button">Choose your runner</button>
-        <button id="quickBtn" type="button" class="ghost">Play as Kalkidan</button>
+      <canvas id="lineup" aria-hidden="true"></canvas>
+      <div class="menu">
+        <button id="quickBtn" type="button">Play as Kalkidan</button>
+        <div class="row">
+          <button id="startBtn" type="button" class="ghost">Choose runner</button>
+          <button id="treeBtn" type="button" class="ghost">Family tree</button>
+        </div>
       </div>
-      <p class="hint">Tap anywhere to jump, tap again in the air to double jump. Every Fidel letter you collect is read aloud and gives you golden power.</p>
+    </div>
+  </div>
+
+  <div class="overlay" id="treeScreen" hidden>
+    <div class="stage">
+      <div class="stage-top">
+        <button id="treeBack" type="button" class="back" aria-label="Back">‹</button>
+        <h1>The family</h1>
       </div>
+      <div class="ftree-wrap"><div class="ftree" id="ftree"></div></div>
     </div>
   </div>
 
@@ -541,12 +587,14 @@ function goFull(){try{if(!matchMedia('(pointer: coarse)').matches)return;const e
   el.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}).catch(()=>{});}catch(e){}}
 
 // ---------- title lineup ----------
-function drawLineup(){const c=$('lineup');if(!c||!SHEET.kalkidan_run)return;const r=c.getBoundingClientRect();if(!r.width)return;const d=Math.min(devicePixelRatio||1,2.5);c.width=r.width*d;c.height=r.height*d;
+let lineF=0;function drawLineup(){const c=$('lineup');if(!c||!SHEET.kalkidan_run)return;const r=c.getBoundingClientRect();if(!r.width)return;const d=Math.min(devicePixelRatio||1,2.5);if(c.width!==Math.round(r.width*d))c.width=r.width*d;if(c.height!==Math.round(r.height*d))c.height=r.height*d;
   const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);const hh=r.height;const save=ctx;
-  const order=[['nahome',206],['kiru',162],['kalkidan',150],['bethani',140],['emmu',128],['eldana',128],['afomia',118]];const tot=order.length;const sp=r.width/(tot+.2);
-  order.forEach(([key,h],i)=>{const sh=SHEET[key+'_run'];const m=sh.m;const s=(hh-6)/206*h/figH(key);const w=m.fw*s,fh=m.fh*s;const cx=sp*(i+.6);
-    x.drawImage(sh.c,0,0,m.fw,m.fh,cx-w/2,hh-2-m.foot*s,w,fh);
-    const faceIds=key==='nahome'?['nahome','meba']:[key];(m.face&&m.face[0]||[]).forEach(([fx,fy,fr],j)=>{const im=FACES[faceIds[j]];if(!im)return;const px=cx-w/2+fx*s,py=hh-2-m.foot*s+fy*s,rad=fr*s*1.28;x.save();x.beginPath();x.arc(px,py,rad,0,7);x.clip();x.drawImage(im,px-rad,py-rad,rad*2,rad*2);x.restore();});});}
+  x.clearRect(0,0,r.width,hh);const order=[['nahome',206],['kiru',162],['kalkidan',150],['bethani',140],['eldana',132],['emmu',128],['afomia',118]];const tot=order.length;const sp=Math.min(r.width/(tot+.2),hh*.62);const off=(r.width-sp*(tot-.2))/2-sp*.4;
+  order.forEach(([key,h],i)=>{const sh=SHEET[key+'_run'];if(!sh)return;const m=sh.m;const s=(hh-10)/206*h/figH(key);const w=m.fw*s,fh=m.fh*s;const cx=off+sp*(i+.6);
+    const six=key==='kalkidan'||key==='eldana';const ff=lineF+i*2;const f=six?ff%6:m.n===3?[0,1,2,1][ff%4]:ff%m.n;
+    x.fillStyle='rgba(40,20,5,.3)';x.beginPath();x.ellipse(cx,hh-6,w*.28,5,0,0,7);x.fill();
+    x.drawImage(sh.c,f*m.fw,0,m.fw,m.fh,cx-w/2,hh-4-m.foot*s,w,fh);
+    const faceIds=key==='nahome'?['nahome','meba']:[key];(m.face&&m.face[f]||[]).forEach(([fx,fy,fr],j)=>{const im=FACES[faceIds[j]];if(!im)return;const px=cx-w/2+fx*s,py=hh-4-m.foot*s+fy*s,rad=fr*s*1.28;x.save();x.beginPath();x.arc(px,py,rad,0,7);x.clip();x.drawImage(im,px-rad,py-rad,rad*2,rad*2);x.restore();});});}
 
 // ---------- team & faces ----------
 let cropFor=null,cropImg=null,cz=1,cx0=0,cy0=0;
@@ -581,6 +629,24 @@ function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{
   d.addEventListener('dblclick',e=>{if(!e.shiftKey)start();});return d;}));selectRunner(pick);
   requestAnimationFrame(()=>{const on=document.querySelector('#team .mate.on'),row=$('team');if(on&&row.scrollWidth>row.clientWidth)row.scrollLeft=on.offsetLeft-(row.clientWidth-on.offsetWidth)/2;});}
 $('goBtn').addEventListener('click',start);
+setInterval(()=>{if(!$('titleScreen').hidden&&!document.hidden){lineF++;drawLineup();}},95);
+const FAMS=[{p:['Birhanu','Gete'],kids:['kalkidan','eldana','afomia','meba']},{p:['Mekbib'],kids:['bethani','emmu']},{p:['Gizaw'],kids:['nahome','kiru']},
+  {p:['Desu']},{p:['Sem']},{p:['Lemi','Wonde']},{p:['Adi','Ermi']}];
+function mebaCanvas(){const c=document.createElement('canvas');c.width=240;c.height=280;const sh=SHEET.nahome_run;if(!sh)return c;const m=sh.m,x=c.getContext('2d');
+  const fc=(m.face&&m.face[0]&&m.face[0][1])||[m.fw*.4,m.fh*.12,m.fw*.06];const r=fc[2],cw=r*3.6,chh=r*3.5,sx=Math.max(0,Math.min(m.fw-cw,fc[0]-cw*.5)),sy=Math.max(0,fc[1]-r*1.8);
+  const k=Math.min(c.width/cw,c.height/chh)*.5;x.drawImage(sh.c,sx,sy,cw,chh,(c.width-cw*k)/2,c.height-chh*k,cw*k,chh*k);return c;}
+function buildTree(){const el=$('ftree');
+  el.innerHTML=`<div class="gen gen-old"><div class="kin"><figure><img src="assets/gashe.webp" alt=""><span class="ft-name">Gashe Kidane</span></figure><figure><img src="assets/emaye.webp" alt=""><span class="ft-name">Emaye Tirunesh</span></figure></div></div>`
+   +`<div class="gen gen-mid">${FAMS.map(f=>`<span class="ft-name">${f.p.join(' &amp; ')}</span>`).join('')}</div>`;
+  const kids=document.createElement('div');kids.className='gen gen-kids';
+  for(const f of FAMS){if(!f.kids)continue;const g=document.createElement('div');g.className='kin';
+    for(const k of f.kids){const playable=!!CHARS[k];const kid=document.createElement(playable?'button':'div');kid.className='ft-kid';
+      if(playable){kid.type='button';kid.setAttribute('aria-label','Choose '+KIDS[k].name);kid.addEventListener('click',()=>{pick=k;store.set('pick',k);buildTeam();show('teamScreen');});}
+      kid.append(k==='meba'?mebaCanvas():mateCanvas(k));kid.insertAdjacentHTML('beforeend',`<span class="ft-name">${KIDS[k].name}</span>`);g.append(kid);}
+    kids.append(g);}
+  el.append(kids);}
+$('treeBtn').addEventListener('click',()=>{buildTree();show('treeScreen');});
+$('treeBack').addEventListener('click',()=>{show('titleScreen');drawLineup();});
 let rowDragged=false;(()=>{const row=$('team');let drag=null;
   row.addEventListener('wheel',e=>{if(row.scrollWidth<=row.clientWidth)return;const d=Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX;row.scrollLeft+=d;e.preventDefault();},{passive:false});
   row.addEventListener('pointerdown',e=>{rowDragged=false;if(e.pointerType!=='mouse'||row.scrollWidth<=row.clientWidth)return;drag={x:e.clientX,l:row.scrollLeft};});
@@ -612,7 +678,7 @@ function alertMsg(){$('cropTitle').textContent='This browser can’t store the p
 $('cropCancel').addEventListener('click',()=>{$('cropScreen').hidden=true;$('teamScreen').hidden=false;});
 
 // ---------- flow ----------
-function show(id){for(const s of ['titleScreen','teamScreen','cropScreen','pauseScreen','endScreen'])$(s).hidden=s!==id;}
+function show(id){for(const s of ['titleScreen','teamScreen','treeScreen','cropScreen','pauseScreen','endScreen'])$(s).hidden=s!==id;}
 function start(){goFull();ac();reset();state='ready';show(null);$('pauseBtn').hidden=false;}
 $('startBtn').addEventListener('click',()=>{buildTeam();show('teamScreen');});$('againBtn').addEventListener('click',start);$('nextBtn').addEventListener('click',()=>{lv=Math.max(0,Math.min(LEVELS.length-1,+$('nextBtn').dataset.to||0));store.set('level',lv);start();});
 function quickLabel(){$('quickBtn').textContent='Play as '+KIDS[pick].name;}quickLabel();$('quickBtn').addEventListener('click',start);
