@@ -115,6 +115,7 @@ body.rot #rotate{display:flex}
 #teamScreen .mate{background:none;box-shadow:none;padding:4px 2px 6px;gap:2px;position:relative;border-radius:14px;display:flex;flex-direction:column;align-items:center;
   font:inherit;color:inherit;cursor:pointer;min-height:0}
 #teamScreen .mate:active{transform:none;box-shadow:none}
+#teamScreen .mate,#teamScreen .mate canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:pan-x}
 #teamScreen .mate:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 #teamScreen .mate.on b{color:var(--gold2)}
 #teamScreen .mate.on .pw b{color:var(--cream)}
@@ -136,12 +137,6 @@ body.rot #rotate{display:flex}
 #teamScreen .mate b{font-size:1.25rem;color:var(--cream);text-shadow:2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 3px 8px rgba(0,0,0,.6)}
 #teamScreen .mate .pw b{font-family:var(--display);font-weight:400;font-size:.9rem;color:var(--gold2)}
 #teamScreen .mate .d{display:none}
-.face{position:absolute;z-index:2;width:30px;height:30px;min-height:30px;padding:0;border-radius:50%;display:grid;place-items:center;transform:translate(-50%,-50%);
-  background:rgba(30,15,8,.82) center/cover no-repeat;color:var(--gold2);box-shadow:inset 0 0 0 2px var(--gold),0 2px 6px rgba(0,0,0,.4)}
-.face:active{transform:translate(-50%,-50%) scale(.94);box-shadow:inset 0 0 0 2px var(--gold)}
-.face.has{box-shadow:inset 0 0 0 2px var(--gold2),0 0 0 2px rgba(30,15,8,.8)}
-.face .tag{position:absolute;left:calc(100% + 3px);top:50%;transform:translateY(-50%);font:400 .7rem var(--display);color:var(--cream);white-space:nowrap;
-  text-shadow:1px 1px 0 #2a1405,-1px 1px 0 #2a1405,1px -1px 0 #2a1405,-1px -1px 0 #2a1405}
 /* phones held sideways: short screens */
 @media (max-height:500px) and (orientation:landscape){
   .overlay{padding:8px max(12px,env(safe-area-inset-left,0px))}
@@ -535,16 +530,22 @@ setInterval(()=>{if($('teamScreen').hidden)return;document.querySelectorAll('#te
 const ROLE={};for(const k of ORDER)ROLE[k]='<b>'+CHARS[k].powerName+'</b><span class="d"> · '+CHARS[k].desc+'</span>';
 function buildLevels(){$('levels').replaceChildren(...LEVELS.map((L,i)=>{const b=document.createElement('button');b.type='button';b.className='small ghost lvl';b.setAttribute('aria-pressed',i===lv);
   b.innerHTML='<span class="geez">'+L.forms[0][0]+' '+L.forms[1][0]+' '+L.forms[2][0]+' …</span>'+(store.get('done_'+i)?' ✓':'');b.setAttribute('aria-label','Level '+(i+1)+': '+L.name);b.addEventListener('click',()=>{lv=i;store.set('level',i);buildLevels();});return b;}));}
-const CAM='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9 4.5 7.6 6.5H5a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5a2 2 0 0 0-2-2h-2.6L15 4.5H9Zm3 4a4.25 4.25 0 1 1 0 8.5 4.25 4.25 0 0 1 0-8.5Zm0 2a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"/></svg>';
-function faceAction(id){cropFor=id;if(FACES[id])openManage(id);else{$('faceFile').value='';$('faceFile').click();}}
 function selectRunner(key){pick=key;store.set('pick',key);document.querySelectorAll('#team .mate').forEach(m=>{const on=m.dataset.key===key;m.classList.toggle('on',on);m.setAttribute('aria-checked',on);});
   $('goBtn').textContent='Run as '+CHARS[key].label;quickLabel();}
 function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{const K=KIDS[key];const d=document.createElement('button');d.type='button';d.className='mate';d.dataset.key=key;d.setAttribute('role','radio');
   d.append(mateCanvas(key));d.insertAdjacentHTML('beforeend',`<b>${K.name}</b><span class="pw">${ROLE[key]}</span>`);
-  d.addEventListener('click',()=>selectRunner(key));d.addEventListener('dblclick',start);return d;}));selectRunner(pick);}
+  let hold=null,held=false,sx=0,sy=0;const who=e=>{if(key!=='nahome')return key;const r=d.querySelector('canvas').getBoundingClientRect();return e.clientY<r.top+r.height*.33?'meba':'nahome';};
+  d.addEventListener('pointerdown',e=>{held=false;sx=e.clientX;sy=e.clientY;const id=who(e);clearTimeout(hold);hold=setTimeout(()=>{held=true;try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}openManage(id);},1000);});
+  d.addEventListener('pointermove',e=>{if(Math.hypot(e.clientX-sx,e.clientY-sy)>10)clearTimeout(hold);});
+  for(const ev of ['pointerup','pointercancel','pointerleave'])d.addEventListener(ev,()=>clearTimeout(hold));
+  d.addEventListener('contextmenu',e=>e.preventDefault());
+  d.addEventListener('click',e=>{if(held){held=false;return;}if(e.shiftKey){openManage(who(e));return;}selectRunner(key);});
+  d.addEventListener('dblclick',e=>{if(!e.shiftKey)start();});return d;}));selectRunner(pick);}
 $('goBtn').addEventListener('click',start);
 function setCropMode(manage){$('cropRow').hidden=manage;$('manageRow').hidden=!manage;$('zoom').hidden=manage;document.querySelector('label[for=zoom]').hidden=manage;}
-function openManage(id){const c=$('cropCv').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,480,480);c.drawImage(FACES[id],70,70,340,340);
+function openManage(id){cropFor=id;const c=$('cropCv').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,480,480);const has=!!FACES[id];
+  if(has)c.drawImage(FACES[id],70,70,340,340);else{c.fillStyle='#2c170d';c.beginPath();c.arc(240,240,170,0,7);c.fill();c.fillStyle='#e2c9a6';c.font='600 34px Nunito,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('No photo yet',240,240);}
+  $('cropNew').textContent=has?'New photo':'Choose photo';$('cropRemove').hidden=!has;$('manageCancel').textContent=has?'Done':'Cancel';
   $('cropTitle').textContent=KIDS[id].name+'’s face';setCropMode(true);$('teamScreen').hidden=true;$('cropScreen').hidden=false;}
 $('cropNew').addEventListener('click',()=>{$('faceFile').value='';$('faceFile').click();});
 $('cropRemove').addEventListener('click',()=>{store.del('face_'+cropFor);delete FACES[cropFor];buildTeam();drawLineup();$('cropScreen').hidden=true;$('teamScreen').hidden=false;});
