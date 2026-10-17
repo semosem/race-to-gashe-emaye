@@ -118,6 +118,20 @@ body.rot #rotate{display:flex}
 #teamScreen .mate b{font-size:1.25rem;color:var(--cream);text-shadow:2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 3px 8px rgba(0,0,0,.6)}
 #teamScreen .mate .pw b{font-family:var(--display);font-weight:400;font-size:.9rem;color:var(--gold2)}
 #teamScreen .mate .d{display:none}
+/* upright phones and narrow windows: runners in one scrolling row on the path, Run button always visible */
+@media (max-width:760px) and (orientation:portrait){
+  #teamScreen{padding:max(14px,env(safe-area-inset-top,0px)) 0 max(12px,env(safe-area-inset-bottom,0px))}
+  .stage-top{padding:0 14px}
+  .stage-top h1{font-size:1.7rem}
+  #teamScreen .team{display:flex;margin-top:auto;overflow-x:auto;scroll-snap-type:x mandatory;gap:0;padding:14px 18px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  #teamScreen .team::-webkit-scrollbar{display:none}
+  #teamScreen .mate{flex:0 0 42%;scroll-snap-align:center}
+  #teamScreen .mate canvas{width:132px;height:154px}
+  #teamScreen .mate::before{top:146px;width:110px}
+  #teamScreen .mate.on::before{top:142px;width:130px}
+  .go{padding:6px 16px 0}
+  #goBtn{width:100%;max-width:340px}
+}
 /* phones held sideways: short screens */
 @media (max-height:500px) and (orientation:landscape){
   .overlay{padding:8px max(12px,env(safe-area-inset-left,0px))}
@@ -133,7 +147,7 @@ body.rot #rotate{display:flex}
   button{font-size:1.05rem;padding:9px 16px}
   #teamScreen .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:2px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   #teamScreen .team::-webkit-scrollbar{display:none}
-  #teamScreen .team{padding-top:14px;margin-top:-10px}
+  #teamScreen .team{padding-top:14px;margin-top:auto}
   .stage{gap:6px}
   .stage-top{grid-template-columns:40px 1fr auto;grid-template-areas:"back title lv";column-gap:10px}
   .stage-top h1{font-size:1.45rem;text-align:left}
@@ -316,7 +330,6 @@ function drawKid(key,anim,frame,x,y,dispH,opt={}){const sh=SHEET[key+'_'+anim]||
     ctx.strokeStyle='rgba(60,30,10,.55)';ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();});
   ctx.restore();}
 function drawRunner(spr,anim,frame,x,y,opt={}){
-  if(spr==='eldana'&&!opt.still){y-=Math.abs(Math.sin(t*11))*7;opt={...opt,rot:(opt.rot||0)+Math.sin(t*11)*.05};}
   if(spr==='afomia'||spr==='emmu'||spr==='eldana'){if(anim==='jump'){anim='run';opt={...opt,rot:(opt.rot||0)-.12};}}
   drawKid(spr,anim,frame,x,y,KIDS[spr].h,opt);}
 const sprH=spr=>KIDS[spr].h;
@@ -522,7 +535,8 @@ function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{
   d.addEventListener('pointerleave',()=>clearTimeout(dwell));
   d.addEventListener('focus',()=>{if(pick!==key)selectRunner(key);});
   d.addEventListener('click',e=>{if(held){held=false;return;}if(e.shiftKey){openManage(who(e));return;}selectRunner(key);});
-  d.addEventListener('dblclick',e=>{if(!e.shiftKey)start();});return d;}));selectRunner(pick);}
+  d.addEventListener('dblclick',e=>{if(!e.shiftKey)start();});return d;}));selectRunner(pick);
+  requestAnimationFrame(()=>{const on=document.querySelector('#team .mate.on'),row=$('team');if(on&&row.scrollWidth>row.clientWidth)row.scrollLeft=on.offsetLeft-(row.clientWidth-on.offsetWidth)/2;});}
 $('goBtn').addEventListener('click',start);
 function setCropMode(manage){$('cropRow').hidden=manage;$('manageRow').hidden=!manage;$('zoom').hidden=manage;document.querySelector('label[for=zoom]').hidden=manage;}
 function openManage(id){cropFor=id;const c=$('cropCv').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,480,480);const has=!!FACES[id];

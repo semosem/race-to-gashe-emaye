@@ -137,6 +137,20 @@ body.rot #rotate{display:flex}
 #teamScreen .mate b{font-size:1.25rem;color:var(--cream);text-shadow:2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 3px 8px rgba(0,0,0,.6)}
 #teamScreen .mate .pw b{font-family:var(--display);font-weight:400;font-size:.9rem;color:var(--gold2)}
 #teamScreen .mate .d{display:none}
+/* upright phones and narrow windows: runners in one scrolling row on the path, Run button always visible */
+@media (max-width:760px) and (orientation:portrait){
+  #teamScreen{padding:max(14px,env(safe-area-inset-top,0px)) 0 max(12px,env(safe-area-inset-bottom,0px))}
+  .stage-top{padding:0 14px}
+  .stage-top h1{font-size:1.7rem}
+  #teamScreen .team{display:flex;margin-top:auto;overflow-x:auto;scroll-snap-type:x mandatory;gap:0;padding:14px 18px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  #teamScreen .team::-webkit-scrollbar{display:none}
+  #teamScreen .mate{flex:0 0 42%;scroll-snap-align:center}
+  #teamScreen .mate canvas{width:132px;height:154px}
+  #teamScreen .mate::before{top:146px;width:110px}
+  #teamScreen .mate.on::before{top:142px;width:130px}
+  .go{padding:6px 16px 0}
+  #goBtn{width:100%;max-width:340px}
+}
 /* phones held sideways: short screens */
 @media (max-height:500px) and (orientation:landscape){
   .overlay{padding:8px max(12px,env(safe-area-inset-left,0px))}
@@ -152,7 +166,7 @@ body.rot #rotate{display:flex}
   button{font-size:1.05rem;padding:9px 16px}
   #teamScreen .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:2px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   #teamScreen .team::-webkit-scrollbar{display:none}
-  #teamScreen .team{padding-top:14px;margin-top:-10px}
+  #teamScreen .team{padding-top:14px;margin-top:auto}
   .stage{gap:6px}
   .stage-top{grid-template-columns:40px 1fr auto;grid-template-areas:"back title lv";column-gap:10px}
   .stage-top h1{font-size:1.45rem;text-align:left}
@@ -259,7 +273,7 @@ body.rot #rotate{display:flex}
 
 <script>
 (()=>{
-const META={"kalkidan":{"run":{"src":"kalkidan_run.webp","fw":231,"fh":308,"n":10,"chest":[[149.0,113],[145.4,113],[146.5,113],[144.8,113],[145.0,115],[149.4,113],[146.7,113],[149.9,113],[147.1,112],[147.2,113]],"foot":302,"face":[[[167.2,49.7,17.8]],[[167.2,49.7,17.8]],[[169.2,49.7,17.8]],[[168.2,49.7,17.8]],[[167.3,51.5,17.7]],[[169.3,50.6,17.7]],[[167.1,49.9,17.9]],[[167.2,49.7,17.8]],[[167.1,48.0,17.9]],[[166.2,49.7,17.8]]]},"jump":{"src":"kalkidan_jump.webp","fw":241,"fh":307,"n":1,"chest":[[124.2,118]],"foot":301,"face":[[[213.1,48.0,17.9]]]},"slide":{"src":"kalkidan_slide.webp","fw":343,"fh":224,"n":1,"chest":[[196.1,112]],"foot":218}},"nahome":{"run":{"src":"nahome_run.webp","fw":200,"fh":279,"n":4,"chest":[[118.9,144],[118.9,145],[113.5,144],[116.6,146]],"foot":273,"face":[[[135.9,83.1,16.1],[112.1,28.5,15.1]],[[135.9,84.8,16.1],[113.6,30.4,15.0]],[[134.9,83.1,16.1],[112.9,28.5,15.1]],[[140.0,84.5,16.0],[111.2,30.3,15.0]]]},"jump":{"src":"nahome_jump.webp","fw":139,"fh":279,"n":3,"chest":[[78.5,139],[76.5,153],[77.7,152]],"foot":273,"face":[[[101.9,83.1,16.1],[79.5,28.5,15.1]],[[105.6,102.4,14.4],[74.0,53.5,13.5]],[[106.5,101.7,14.5],[76.1,52.5,13.6]]]}},"kiru":{"run":{"src":"kiru_run.webp","fw":201,"fh":244,"n":4,"chest":[[117.2,83],[118.4,85],[112.3,80],[116.1,83]],"foot":238,"face":[[[131.0,36.0,18.0]],[[133.0,37.9,18.0]],[[136.6,31.5,18.4]],[[130.8,35.2,18.2]]]},"jump":{"src":"kiru_jump.webp","fw":142,"fh":234,"n":3,"chest":[[80.1,79],[78.7,104],[82.5,86]],"foot":228,"face":[[[111.3,30.6,17.7]],[[117.5,64.7,14.5]],[[110.2,39.5,16.8]]]}},"bethani":{"run":{"src":"bethani_run.webp","fw":175,"fh":225,"n":5,"chest":[[106.9,95],[107.8,95],[104.8,90],[106.4,90],[107.6,86]],"foot":219,"face":[[[119.5,43.3,15.5]],[[118.5,43.3,15.5]],[[116.0,38.0,16.0]],[[118.0,38.0,16.0]],[[118.5,32.7,16.5]]]},"jump":{"src":"bethani_jump.webp","fw":182,"fh":245,"n":3,"chest":[[89.3,103],[80.1,89],[90.9,101]],"foot":239,"face":[[[105.7,54.5,16.3]],[[96.9,35.0,18.1]],[[105.3,51.0,16.7]]]}},"emmu":{"run":{"src":"emmu_run.webp","fw":177,"fh":230,"n":3,"chest":[[99.4,113],[97.4,103],[95.6,97]],"foot":224,"face":[[[111.8,59.9,16.2]],[[115.3,45.1,17.7]],[[113.4,36.4,18.6]]]}},"eldana":{"run":{"src":"eldana_run.webp","fw":191,"fh":227,"n":1,"chest":[[110.9,96]],"foot":221,"face":[[[132.6,35.2,18.4]]]}},"afomia":{"run":{"src":"afomia_run.webp","fw":154,"fh":219,"n":3,"chest":[[91.7,92],[91.7,100],[82.9,94]],"foot":213,"face":[[[101.0,43.0,18.0]],[[105.2,53.8,16.8]],[[104.2,44.7,17.8]]]},"wave":{"src":"afomia_wave.webp","fw":153,"fh":239,"n":1,"chest":[[77.6,101]],"foot":233}},"tukul":{"src":"tukul.webp","w":531,"h":436},"gashe":{"src":"gashe.webp","w":165,"h":331},"emaye":{"src":"emaye.webp","w":164,"h":310},"wave_pair":{"src":"wave_pair.webp","w":239,"h":231},"wave_pink":{"src":"wave_pink.webp","w":131,"h":203},"jebena":{"src":"jebena.webp","w":291,"h":345},"mesob":{"src":"mesob.webp","w":267,"h":248},"rock":{"src":"rock.webp","w":336,"h":177},"bean":{"src":"bean.webp","w":64,"h":72},"pw_speed":{"src":"pw_speed.webp","w":160,"h":160},"pw_magnet":{"src":"pw_magnet.webp","w":160,"h":160},"pw_double":{"src":"pw_double.webp","w":160,"h":160},"pw_dash":{"src":"pw_dash.webp","w":160,"h":160},"bg":{"mountains":[2752,254],"hills":[2752,257],"ground":[2752,204],"tibeb":[688,48]}};
+const META={"kalkidan":{"run":{"src":"kalkidan_run.webp","fw":231,"fh":308,"n":10,"chest":[[149.0,113],[145.4,113],[146.5,113],[144.8,113],[145.0,115],[149.4,113],[146.7,113],[149.9,113],[147.1,112],[147.2,113]],"foot":302,"face":[[[167.2,49.7,17.8]],[[167.2,49.7,17.8]],[[169.2,49.7,17.8]],[[168.2,49.7,17.8]],[[167.3,51.5,17.7]],[[169.3,50.6,17.7]],[[167.1,49.9,17.9]],[[167.2,49.7,17.8]],[[167.1,48.0,17.9]],[[166.2,49.7,17.8]]]},"jump":{"src":"kalkidan_jump.webp","fw":241,"fh":307,"n":1,"chest":[[124.2,118]],"foot":301,"face":[[[213.1,48.0,17.9]]]},"slide":{"src":"kalkidan_slide.webp","fw":343,"fh":224,"n":1,"chest":[[196.1,112]],"foot":218}},"nahome":{"run":{"src":"nahome_run.webp","fw":200,"fh":279,"n":4,"chest":[[118.9,144],[118.9,145],[113.5,144],[116.6,146]],"foot":273,"face":[[[135.9,83.1,16.1],[112.1,28.5,15.1]],[[135.9,84.8,16.1],[113.6,30.4,15.0]],[[134.9,83.1,16.1],[112.9,28.5,15.1]],[[140.0,84.5,16.0],[111.2,30.3,15.0]]]},"jump":{"src":"nahome_jump.webp","fw":139,"fh":279,"n":3,"chest":[[78.5,139],[76.5,153],[77.7,152]],"foot":273,"face":[[[101.9,83.1,16.1],[79.5,28.5,15.1]],[[105.6,102.4,14.4],[74.0,53.5,13.5]],[[106.5,101.7,14.5],[76.1,52.5,13.6]]]}},"kiru":{"run":{"src":"kiru_run.webp","fw":201,"fh":244,"n":4,"chest":[[117.2,83],[118.4,85],[112.3,80],[116.1,83]],"foot":238,"face":[[[131.0,36.0,18.0]],[[133.0,37.9,18.0]],[[136.6,31.5,18.4]],[[130.8,35.2,18.2]]]},"jump":{"src":"kiru_jump.webp","fw":142,"fh":234,"n":3,"chest":[[80.1,79],[78.7,104],[82.5,86]],"foot":228,"face":[[[111.3,30.6,17.7]],[[117.5,64.7,14.5]],[[110.2,39.5,16.8]]]}},"bethani":{"run":{"src":"bethani_run.webp","fw":175,"fh":225,"n":5,"chest":[[106.9,95],[107.8,95],[104.8,90],[106.4,90],[107.6,86]],"foot":219,"face":[[[119.5,43.3,15.5]],[[118.5,43.3,15.5]],[[116.0,38.0,16.0]],[[118.0,38.0,16.0]],[[118.5,32.7,16.5]]]},"jump":{"src":"bethani_jump.webp","fw":182,"fh":245,"n":3,"chest":[[89.3,103],[80.1,89],[90.9,101]],"foot":239,"face":[[[105.7,54.5,16.3]],[[96.9,35.0,18.1]],[[105.3,51.0,16.7]]]}},"emmu":{"run":{"src":"emmu_run.webp","fw":177,"fh":230,"n":3,"chest":[[99.4,113],[97.4,103],[95.6,97]],"foot":224,"face":[[[111.8,59.9,16.2]],[[115.3,45.1,17.7]],[[113.4,36.4,18.6]]]}},"eldana":{"run":{"src":"eldana_run.webp","fw":177,"fh":230,"n":3,"chest":[[99.4,113],[97.4,103],[95.6,97]],"foot":224,"face":[[[111.8,59.9,16.2]],[[115.3,45.1,17.7]],[[113.4,36.4,18.6]]]}},"afomia":{"run":{"src":"afomia_run.webp","fw":154,"fh":219,"n":3,"chest":[[91.7,92],[91.7,100],[82.9,94]],"foot":213,"face":[[[101.0,43.0,18.0]],[[105.2,53.8,16.8]],[[104.2,44.7,17.8]]]},"wave":{"src":"afomia_wave.webp","fw":153,"fh":239,"n":1,"chest":[[77.6,101]],"foot":233}},"tukul":{"src":"tukul.webp","w":531,"h":436},"gashe":{"src":"gashe.webp","w":165,"h":331},"emaye":{"src":"emaye.webp","w":164,"h":310},"wave_pair":{"src":"wave_pair.webp","w":239,"h":231},"wave_pink":{"src":"wave_pink.webp","w":131,"h":203},"jebena":{"src":"jebena.webp","w":291,"h":345},"mesob":{"src":"mesob.webp","w":267,"h":248},"rock":{"src":"rock.webp","w":336,"h":177},"bean":{"src":"bean.webp","w":64,"h":72},"pw_speed":{"src":"pw_speed.webp","w":160,"h":160},"pw_magnet":{"src":"pw_magnet.webp","w":160,"h":160},"pw_double":{"src":"pw_double.webp","w":160,"h":160},"pw_dash":{"src":"pw_dash.webp","w":160,"h":160},"bg":{"mountains":[2752,254],"hills":[2752,257],"ground":[2752,204],"tibeb":[688,48]}};
 const $=id=>document.getElementById(id);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 
@@ -337,7 +351,6 @@ function drawKid(key,anim,frame,x,y,dispH,opt={}){const sh=SHEET[key+'_'+anim]||
     ctx.strokeStyle='rgba(60,30,10,.55)';ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();});
   ctx.restore();}
 function drawRunner(spr,anim,frame,x,y,opt={}){
-  if(spr==='eldana'&&!opt.still){y-=Math.abs(Math.sin(t*11))*7;opt={...opt,rot:(opt.rot||0)+Math.sin(t*11)*.05};}
   if(spr==='afomia'||spr==='emmu'||spr==='eldana'){if(anim==='jump'){anim='run';opt={...opt,rot:(opt.rot||0)-.12};}}
   drawKid(spr,anim,frame,x,y,KIDS[spr].h,opt);}
 const sprH=spr=>KIDS[spr].h;
@@ -543,7 +556,8 @@ function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{
   d.addEventListener('pointerleave',()=>clearTimeout(dwell));
   d.addEventListener('focus',()=>{if(pick!==key)selectRunner(key);});
   d.addEventListener('click',e=>{if(held){held=false;return;}if(e.shiftKey){openManage(who(e));return;}selectRunner(key);});
-  d.addEventListener('dblclick',e=>{if(!e.shiftKey)start();});return d;}));selectRunner(pick);}
+  d.addEventListener('dblclick',e=>{if(!e.shiftKey)start();});return d;}));selectRunner(pick);
+  requestAnimationFrame(()=>{const on=document.querySelector('#team .mate.on'),row=$('team');if(on&&row.scrollWidth>row.clientWidth)row.scrollLeft=on.offsetLeft-(row.clientWidth-on.offsetWidth)/2;});}
 $('goBtn').addEventListener('click',start);
 function setCropMode(manage){$('cropRow').hidden=manage;$('manageRow').hidden=!manage;$('zoom').hidden=manage;document.querySelector('label[for=zoom]').hidden=manage;}
 function openManage(id){cropFor=id;const c=$('cropCv').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,480,480);const has=!!FACES[id];
