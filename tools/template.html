@@ -346,7 +346,7 @@ const loadImg=n=>new Promise(r=>{const i=new Image();i.onload=()=>{IMG[n]=i;r()}
 const FACES={};
 function loadFaces(){for(const id of Object.keys(KIDS)){const d=store.get('face_'+id);if(d){const i=new Image();i.onload=()=>{FACES[id]=i;drawLineup();};i.src=d;}else delete FACES[id];}}
 
-// Sprite sheets with each cousin's name printed on the shirt
+// Sprite sheets (names are not printed on the shirts)
 const SHEET={};
 function bake(key,animKey,label,color){const m=META[key][animKey];const src=IMG[key+'_'+animKey];if(!src)return;
   const c=document.createElement('canvas');c.width=src.width;c.height=src.height;const x=c.getContext('2d');x.drawImage(src,0,0);
@@ -692,7 +692,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state==='
 reset();resize();requestAnimationFrame(loop);
 Promise.all(names.map(loadImg)).then(async()=>{try{await Promise.race([document.fonts.load('40px "Lilita One"'),new Promise(r=>setTimeout(r,2500))]);}catch(e){}
   const C={kalkidan:['Kalkidan',KIDS.kalkidan.shirt],nahome:['Nahome',KIDS.nahome.shirt],kiru:['Kiru',KIDS.kiru.shirt],bethani:['Bethani',KIDS.bethani.shirt],emmu:['Emmu',KIDS.emmu.shirt],eldana:['Eldana',KIDS.eldana.shirt],afomia:['Afomia',KIDS.afomia.shirt]};
-  for(const[key,[label,col]] of Object.entries(C))for(const anim of Object.keys(META[key])){if(anim==='wave')continue;bake(key,anim,label,col);}
+  for(const[key,[label,col]] of Object.entries(C))for(const anim of Object.keys(META[key])){if(anim==='wave')continue;bake(key,anim,null,col);}
   loadFaces();drawLineup();});
 })();
 </script>
