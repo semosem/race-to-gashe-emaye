@@ -106,6 +106,7 @@ button.small.ghost{box-shadow:inset 0 0 0 1.5px var(--muted)}
 #cropBox canvas{width:240px;height:240px;display:block}
 #cropBox::after{content:"";position:absolute;inset:0;border-radius:12px;background:radial-gradient(circle at 50% 50%,transparent 0 84px,rgba(0,0,0,.6) 85px);pointer-events:none}
 input[type=range]{width:100%;accent-color:var(--gold)}
+.pause-say{margin:-4px 0 14px;color:var(--cream);font-size:1.05rem}
 .tl,.tr{display:flex;flex-direction:column;gap:12px;min-width:0}
 #wrap{-webkit-touch-callout:none}
 button{min-height:44px}
@@ -299,6 +300,7 @@ button.ft-kid{cursor:pointer}button.ft-kid:hover canvas,button.ft-kid:focus-visi
   <div class="overlay" id="pauseScreen" hidden>
     <div class="card">
       <h1>Paused</h1>
+      <p id="pauseSay" class="pause-say"></p>
       <div class="row"><button id="resumeBtn" type="button">Keep running</button><button id="quitBtn" type="button" class="ghost">Back to start</button></div>
     </div>
   </div>
@@ -515,6 +517,19 @@ function coin(x,y,ch,r=24){const g=ctx.createRadialGradient(x-r*.3,y-r*.3,2,x,y,
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function heart(x,y,s,full){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.beginPath();ctx.moveTo(0,4);ctx.bezierCurveTo(-10,-4,-6,-12,0,-6);ctx.bezierCurveTo(6,-12,10,-4,0,4);
   ctx.fillStyle=full?'#e5483b':'rgba(255,255,255,.18)';ctx.fill();ctx.restore();}
+function letterStrip(){const n=FIDEL.length,Hs=H/uiS,tw=Math.min(46,(W-150)/(n+1.6)),th=Math.round(tw*.96),gap=Math.max(3,tw*.12);
+  ctx.font='700 '+Math.round(tw*.3)+'px "Noto Sans Ethiopic",Nunito,sans-serif';const lab=LEVELS[lv].key+' ቤት',lw=ctx.measureText(lab).width+14;
+  const total=lw+n*(tw+gap)+gap+6,x0=W/2-total/2,y0=Hs-th-10;
+  ctx.fillStyle='rgba(30,15,8,.72)';rr(x0,y0-5,total,th+10,14);ctx.fill();ctx.strokeStyle='rgba(242,182,50,.35)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#f2b632';ctx.fillText(lab,x0+10,y0+th/2);
+  const pulse=.5+.5*Math.sin(t*6);
+  for(let i=0;i<n;i++){const [ch,tr]=FIDEL[i],x=x0+lw+gap+i*(tw+gap),got=gotLetters.includes(i),next=i===letterIdx;
+    ctx.fillStyle=got?'#f2b632':'rgba(255,255,255,.07)';rr(x,y0,tw,th,9);ctx.fill();
+    if(got){ctx.fillStyle='rgba(122,74,12,.55)';rr(x,y0+th-4,tw,4,2);ctx.fill();}
+    ctx.strokeStyle=got?'#ffe7a3':next?'rgba(255,215,122,'+(.45+.55*pulse)+')':'rgba(255,255,255,.18)';ctx.lineWidth=next?2.5:1.5;rr(x,y0,tw,th,9);ctx.stroke();
+    ctx.textAlign='center';ctx.fillStyle=got?'#2a1405':next?'#ffd77a':'rgba(251,243,226,.5)';ctx.font='700 '+Math.round(tw*.48)+'px "Noto Sans Ethiopic",sans-serif';ctx.fillText(ch,x+tw/2,y0+th*.42);
+    ctx.font='800 '+Math.round(tw*.22)+'px Nunito,sans-serif';ctx.fillStyle=got?'rgba(42,20,5,.75)':'rgba(251,243,226,.45)';ctx.fillText(tr,x+tw/2,y0+th*.8);}
+  ctx.textAlign='left';}
 function hud(){ctx.textBaseline='middle';
   ctx.fillStyle='rgba(30,15,8,.7)';rr(14,12,214,40,12);ctx.fill();const hn=Math.min(5,Math.max(3,hearts));for(let i=0;i<hn;i++)heart(34+i*22,32,1.15,i<hearts);
   if(IMG.bean)ctx.drawImage(IMG.bean,150,21,18,20);ctx.font='20px "Lilita One",sans-serif';ctx.fillStyle='#fbf3e2';ctx.textAlign='left';ctx.fillText(beans,174,33);
@@ -526,9 +541,8 @@ function hud(){ctx.textBaseline='middle';
   ctx.fillStyle='#fbf3e2';ctx.beginPath();ctx.arc(bx+bw*pr,42,6,0,7);ctx.fill();ctx.strokeStyle='#7a4a0c';ctx.lineWidth=2;ctx.stroke();
   ctx.fillStyle='rgba(30,15,8,.7)';rr(W-196,12,126,40,12);ctx.fill();ctx.textAlign='right';ctx.font='22px "Lilita One",sans-serif';ctx.fillStyle='#fbf3e2';ctx.fillText(String(Math.round(score)).padStart(6,'0'),W-82,33);
   // fidel + timers row
-  ctx.fillStyle='rgba(30,15,8,.7)';rr(14,58,214,32,10);ctx.fill();ctx.textAlign='left';ctx.font='700 17px "Noto Sans Ethiopic",sans-serif';ctx.fillStyle='#ffd77a';ctx.fillText(LEVELS[lv].key+' ቤት',24,75);
-  ctx.font='17px "Lilita One",sans-serif';ctx.fillStyle='#fbf3e2';ctx.fillText(gotLetters.length+' / '+FIDEL.length,80,75);for(let i=0;i<FIDEL.length;i++){ctx.fillStyle=gotLetters.includes(i)?'#ffd77a':'rgba(255,255,255,.2)';ctx.beginPath();ctx.arc(140+i*11,75,4,0,7);ctx.fill();}
-  let ix=240;for(const k of ['speed','magnet','double','dash']){if(timers[k]>0&&IMG[POWS[k].img]){ctx.drawImage(IMG[POWS[k].img],ix,58,32,32);ctx.fillStyle='#ffd77a';ctx.fillRect(ix,93,32*timers[k]/POWS[k].t,3);ix+=40;}}
+  letterStrip();
+  let ix=14;for(const k of ['speed','magnet','double','dash']){if(timers[k]>0&&IMG[POWS[k].img]){ctx.drawImage(IMG[POWS[k].img],ix,58,32,32);ctx.fillStyle='#ffd77a';ctx.fillRect(ix,93,32*timers[k]/POWS[k].t,3);ix+=40;}}
   const L=leg();let chip=L.powerName,on=true;
   if(L.power==='shield'){chip=shieldUp?'Princess shield ready':'Shield back in '+Math.ceil(Math.max(0,shieldT))+'s';on=shieldUp;}
   else if(L.power==='smash'){chip='Smash × '+smashes;on=smashes>0;}
@@ -684,13 +698,16 @@ $('startBtn').addEventListener('click',()=>{buildTeam();show('teamScreen');});$(
 function quickLabel(){$('quickBtn').textContent='Play as '+KIDS[pick].name;}quickLabel();$('quickBtn').addEventListener('click',start);
 $('endTeamBtn').addEventListener('click',()=>{buildTeam();state='title';show('teamScreen');});
 $('teamBack').addEventListener('click',()=>{state='title';quickLabel();show('titleScreen');drawLineup();});
-let resumeTo='play';$('pauseBtn').addEventListener('click',e=>{e.stopPropagation();if(state==='play'||state==='ready'){resumeTo=state;state='paused';show('pauseScreen');}});
+const RESTS=['in the shade of the acacia','by the tukul wall','on a smooth warm rock','under a big warka tree'];
+function pauseLine(){const K=KIDS[pick],spot=RESTS[Math.floor(Math.random()*RESTS.length)];
+  $('pauseSay').textContent=pick==='nahome'?'Nahome and Meba are catching their breath '+spot+'.':CHARS[pick].label+' is catching '+(K.girl?'her':'his')+' breath '+spot+'.';}
+let resumeTo='play';$('pauseBtn').addEventListener('click',e=>{e.stopPropagation();if(state==='play'||state==='ready'){resumeTo=state;state='paused';pauseLine();show('pauseScreen');}});
 $('resumeBtn').addEventListener('click',()=>{state=resumeTo;show(null);last=performance.now();});
 $('quitBtn').addEventListener('click',()=>{runId++;state='title';$('pauseBtn').hidden=true;quickLabel();show('titleScreen');drawLineup();});
 cv.addEventListener('pointerdown',e=>{e.preventDefault();jump();});cv.addEventListener('pointerup',cut);
 addEventListener('keydown',e=>{if((e.code==='Space'||e.code==='ArrowUp')&&state==='play'){e.preventDefault();if(!e.repeat)jump();}});
 addEventListener('keyup',e=>{if(e.code==='Space'||e.code==='ArrowUp')cut();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state==='play'||state==='ready')){resumeTo=state;state='paused';show('pauseScreen');}last=performance.now();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state==='play'||state==='ready')){resumeTo=state;state='paused';pauseLine();show('pauseScreen');}last=performance.now();});
 
 // ---------- boot ----------
 reset();resize();requestAnimationFrame(loop);
