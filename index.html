@@ -100,6 +100,28 @@ button.small{min-height:36px}
 @keyframes turn{0%,20%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
 body.rot #rotate{display:flex}
 @media (prefers-reduced-motion:reduce){#rotate .phone{animation:none;transform:rotate(-90deg)}}
+/* Runner select: no panel, everything sits on the scenery */
+#teamScreen{background:linear-gradient(rgba(20,8,4,.62),rgba(20,8,4,.12) 32%,rgba(20,8,4,.05) 60%,rgba(20,8,4,.55));align-items:stretch}
+.stage{width:100%;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-height:100%}
+.stage-top{display:grid;grid-template-columns:44px 1fr 44px;grid-template-areas:"back title ." "lv lv lv";align-items:center;row-gap:10px}
+.stage-top h1{grid-area:title;text-align:center;font-size:clamp(1.6rem,4.4vw,2.6rem);color:var(--gold2);
+  text-shadow:0 3px 0 #6b3a12,0 0 2px #2a1405,2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 6px 18px rgba(0,0,0,.55)}
+.stage-top .row{grid-area:lv}
+.back{grid-area:back;width:44px;height:44px;padding:0;border-radius:50%;font-size:1.8rem;line-height:1;background:rgba(30,15,8,.7);color:var(--gold2);box-shadow:inset 0 0 0 2px var(--gold)}
+.back:active{transform:translateY(1px);box-shadow:inset 0 0 0 2px var(--gold)}
+.lvl{background:rgba(30,15,8,.7)!important;color:var(--cream)!important;box-shadow:inset 0 0 0 2px rgba(242,182,50,.55)!important}
+.lvl[aria-pressed="true"]{background:linear-gradient(#ffd77a,#f2b632)!important;color:#2a1405!important;box-shadow:0 3px 0 #9c6a14!important}
+#teamScreen .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:4px 6px;align-items:end}
+#teamScreen .mate{background:none;box-shadow:none;padding:4px 2px 2px;gap:2px;position:relative;border-radius:0}
+#teamScreen .mate canvas{width:120px;height:140px;position:relative;z-index:1;filter:drop-shadow(0 4px 4px rgba(0,0,0,.35));transition:transform .15s}
+#teamScreen .mate::before{content:"";position:absolute;left:50%;top:132px;width:96px;height:16px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(rgba(0,0,0,.45),transparent 70%)}
+#teamScreen .mate.on::before{background:radial-gradient(rgba(255,215,122,.95),rgba(242,182,50,.35) 55%,transparent 72%);width:120px;height:22px;top:128px}
+#teamScreen .mate.on canvas{transform:translateY(-4px) scale(1.06)}
+#teamScreen .mate b{font-size:1.25rem;color:var(--cream);text-shadow:2px 2px 0 #2a1405,-2px 2px 0 #2a1405,2px -1px 0 #2a1405,-2px -1px 0 #2a1405,0 3px 8px rgba(0,0,0,.6)}
+#teamScreen .mate .pw b{font-family:var(--display);font-weight:400;font-size:.9rem;color:var(--gold2)}
+#teamScreen .mate .d{display:none}
+#teamScreen .mate .row{gap:6px;margin-top:4px;flex-wrap:nowrap}
+#teamScreen .mate button.small.ghost{background:rgba(30,15,8,.72)}
 /* phones held sideways: short screens */
 @media (max-height:500px) and (orientation:landscape){
   .overlay{padding:8px max(12px,env(safe-area-inset-left,0px))}
@@ -113,16 +135,23 @@ body.rot #rotate{display:flex}
   #lineup{height:clamp(100px,34vh,150px)}
   .hint{font-size:.8rem}
   button{font-size:1.05rem;padding:9px 16px}
-  .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding-bottom:6px;-webkit-overflow-scrolling:touch}
-  .mate{flex:0 0 176px;scroll-snap-align:start;padding:8px;gap:2px}
-  .mate .d,#teamScreen .card>p,#teamScreen h2{display:none}
-  #teamScreen h1{font-size:1.4rem}
+  #teamScreen .team{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:2px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  #teamScreen .team::-webkit-scrollbar{display:none}
+  .stage{gap:6px}
+  .stage-top{grid-template-columns:40px 1fr auto;grid-template-areas:"back title lv";column-gap:10px}
+  .stage-top h1{font-size:1.45rem;text-align:left}
+  .back{width:40px;height:40px;min-height:40px}
+  .lvl{font-size:.78rem;padding:6px 9px}
+  #teamScreen .mate{flex:0 0 132px;scroll-snap-align:start}
+  #teamScreen .mate canvas{width:96px;height:112px}
+  #teamScreen .mate::before{top:104px;width:80px}
+  #teamScreen .mate.on::before{top:100px;width:100px}
+  #teamScreen .mate b{font-size:1.05rem}
+  #teamScreen .mate .pw b{font-size:.78rem}
   .mate .row{flex-wrap:nowrap}
   .mate button.small{padding:6px 8px;font-size:.8rem}
-  .mate canvas{width:84px;height:98px}
   .mate .pw{font-size:.75rem}
   .fam{display:none}
-  #teamScreen .card>p{font-size:.8rem}
   .say img{height:56px}
   .stats b{font-size:1.3rem}
   .fidel span{font-size:1.3rem;padding:6px 0 4px}
@@ -162,14 +191,13 @@ body.rot #rotate{display:flex}
   </div>
 
   <div class="overlay" id="teamScreen" hidden>
-    <div class="card wide">
-      <h1>Choose your runner</h1>
-      <p>Every runner has a special power. Add a photo to put their real face in the game; photos stay on this device only.</p>
-      <h2>Level</h2>
-      <div class="row" id="levels"></div>
+    <div class="stage">
+      <div class="stage-top">
+        <button id="teamBack" type="button" class="back" aria-label="Back">‹</button>
+        <h1>Choose your runner</h1>
+        <div class="row" id="levels"></div>
+      </div>
       <div class="team" id="team"></div>
-      <p class="fam">Cheering from the side: Birhanu &amp; Gete, Uncle Mekbib, Uncle Gizaw, Uncle Desu, Uncle Sem, Aunt Lemi &amp; Wonde, Aunt Adi &amp; Ermi.</p>
-      <div class="row"><button id="teamBack" type="button" class="ghost">Back</button></div>
     </div>
   </div>
 
@@ -179,6 +207,7 @@ body.rot #rotate{display:flex}
       <div id="cropBox"><canvas id="cropCv" width="480" height="480"></canvas></div>
       <label class="hint" for="zoom">Drag to move the face into the circle, then zoom</label>
       <input id="zoom" type="range" min="1" max="4" step="0.01" value="1">
+      <p class="hint">The photo stays on this device.</p>
       <div class="row"><button id="cropSave" type="button">Save face</button><button id="cropCancel" type="button" class="ghost">Cancel</button></div>
     </div>
   </div>
@@ -475,7 +504,7 @@ function mateCanvas(key){const c=document.createElement('canvas');const d=2;c.wi
   return c;}
 const ROLE={meba:'<b>Rides with Nahome</b>'};for(const k of ORDER)ROLE[k]='<b>'+CHARS[k].powerName+'</b><span class="d"> · '+CHARS[k].desc+'</span>';
 function buildLevels(){$('levels').replaceChildren(...LEVELS.map((L,i)=>{const b=document.createElement('button');b.type='button';b.className='small ghost lvl';b.setAttribute('aria-pressed',i===lv);
-  b.innerHTML='Level '+(i+1)+' · <span class="geez">'+L.forms.map(f=>f[0]).join(' ')+'</span>'+(store.get('done_'+i)?' ✓':'');b.addEventListener('click',()=>{lv=i;store.set('level',i);buildLevels();});return b;}));}
+  b.innerHTML='<span class="geez">'+L.forms[0][0]+' '+L.forms[1][0]+' '+L.forms[2][0]+' …</span>'+(store.get('done_'+i)?' ✓':'');b.setAttribute('aria-label','Level '+(i+1)+': '+L.name);b.addEventListener('click',()=>{lv=i;store.set('level',i);buildLevels();});return b;}));}
 function buildTeam(){buildLevels();$('team').replaceChildren(...['afomia','emmu','eldana','bethani','kalkidan','kiru','nahome','meba'].map(key=>{const K=KIDS[key];const d=document.createElement('div');d.className='mate'+(key===pick?' on':'');
   d.append(mateCanvas(key));d.insertAdjacentHTML('beforeend',`<b>${K.name}</b><span class="pw">${ROLE[key]}</span>`);
   const row=document.createElement('div');row.className='row';if(CHARS[key]){const pb=document.createElement('button');pb.type='button';pb.className='small';pb.textContent='Play';pb.setAttribute('aria-label','Play as '+K.name);pb.addEventListener('click',()=>{pick=key;store.set('pick',key);start();});row.append(pb);}const a=document.createElement('button');a.type='button';a.className='small ghost';a.textContent=FACES[key]?'Change face':'Add face';
