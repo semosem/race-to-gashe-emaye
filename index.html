@@ -539,6 +539,9 @@ function buildTeam(){buildLevels();$('team').replaceChildren(...ORDER.map(key=>{
   d.addEventListener('pointermove',e=>{if(Math.hypot(e.clientX-sx,e.clientY-sy)>10)clearTimeout(hold);});
   for(const ev of ['pointerup','pointercancel','pointerleave'])d.addEventListener(ev,()=>clearTimeout(hold));
   d.addEventListener('contextmenu',e=>e.preventDefault());
+  let dwell=null;d.addEventListener('pointerenter',e=>{if(e.pointerType!=='mouse')return;clearTimeout(dwell);dwell=setTimeout(()=>{if(pick!==key)selectRunner(key);},180);});
+  d.addEventListener('pointerleave',()=>clearTimeout(dwell));
+  d.addEventListener('focus',()=>{if(pick!==key)selectRunner(key);});
   d.addEventListener('click',e=>{if(held){held=false;return;}if(e.shiftKey){openManage(who(e));return;}selectRunner(key);});
   d.addEventListener('dblclick',e=>{if(!e.shiftKey)start();});return d;}));selectRunner(pick);}
 $('goBtn').addEventListener('click',start);
