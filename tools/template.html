@@ -326,7 +326,7 @@ function drawBg(scroll){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop
 // draw a cousin (feet at x,y). Returns nothing.
 function figH(key){return (META[key].run.foot-6)}
 function drawKid(key,anim,frame,x,y,dispH,opt={}){const sh=SHEET[key+'_'+anim]||SHEET[key+'_run'];if(!sh)return;const m=sh.m;const s=dispH*(opt.scale||1)/figH(key);
-  const f=((frame%m.n)+m.n)%m.n;const w=m.fw*s,h=m.fh*s;const dx=x-w*.5,dy=y-m.foot*s;
+  const f=(anim==='run'&&m.n===3)?[0,1,2,1][((frame%4)+4)%4]:((frame%m.n)+m.n)%m.n;const w=m.fw*s,h=m.fh*s;const dx=x-w*.5,dy=y-m.foot*s;
   ctx.save();if(opt.alpha!=null)ctx.globalAlpha=opt.alpha;if(opt.rot||opt.flip){ctx.translate(x,y);if(opt.rot)ctx.rotate(opt.rot);if(opt.flip)ctx.scale(-1,1);ctx.translate(-x,-y);}
   ctx.drawImage(sh.c,f*m.fw,0,m.fw,m.fh,dx,dy,w,h);
   const faceIds=key==='nahome'?['nahome','meba']:[key];const fl=m.face&&m.face[f];
@@ -530,7 +530,7 @@ function drawLineup(){const c=$('lineup');if(!c||!SHEET.kalkidan_run)return;cons
 // ---------- team & faces ----------
 let cropFor=null,cropImg=null,cz=1,cx0=0,cy0=0;
 function paintMate(c,key,f){const x=c.getContext('2d');x.setTransform(2,0,0,2,0,0);x.clearRect(0,0,120,140);
-  const src=key==='meba'?'nahome':key;const sh=SHEET[src+'_run'];if(!sh)return;const m=sh.m;const nf=src==='kalkidan'?6:m.n;f=((f%nf)+nf)%nf;
+  const src=key==='meba'?'nahome':key;const sh=SHEET[src+'_run'];if(!sh)return;const m=sh.m;const nf=src==='kalkidan'?6:m.n;f=nf===3?[0,1,2,1][((f%4)+4)%4]:((f%nf)+nf)%nf;
   let s=132/figH(src);if(key==='meba'){s=300/figH(src);}
   const w=m.fw*s,h=m.fh*s;let dx=60-w/2,dy=136-m.foot*s;if(key==='meba'){dy=6-m.face[0][1][1]*s+40;dx=60-m.face[0][1][0]*s;}
   x.drawImage(sh.c,f*m.fw,0,m.fw,m.fh,dx,dy,w,h);
